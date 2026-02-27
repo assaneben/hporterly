@@ -1,0 +1,40 @@
+{
+  "demo_data_notice": "DEMO DATA — SYNTHETIC / NOT REAL",
+  "dataset": "minimal_demo",
+  "version": "1.0.0",
+  "transfers": [
+    {
+      "request_id": "8f85b7a5-3fd2-4f62-9f21-a5e74bcbdd11",
+      "origin_location": "Unit A",
+      "destination_location": "Imaging",
+      "priority": "high",
+      "status": "queued",
+      "requested_at": "2026-02-24T08:15:00Z",
+      "updated_at": "2026-02-24T08:15:00Z",
+      "requested_by": "dispatcher.alpha",
+      "assigned_to": "porter-01"
+    },
+    {
+      "request_id": "4ce9da4f-2b9d-4cb6-a80e-64d359d6d57f",
+      "origin_location": "Unit B",
+      "destination_location": "Lab",
+      "priority": "routine",
+      "status": "in_progress",
+      "requested_at": "2026-02-24T08:20:00Z",
+      "updated_at": "2026-02-24T08:32:00Z",
+      "requested_by": "dispatcher.bravo",
+      "assigned_to": "porter-02"
+    },
+    {
+      "request_id": "b7d2ef6c-7784-45d2-a5e8-3cd96a65d1a1",
+      "origin_location": "OR-1",
+      "destination_location": "Recovery",
+      "priority": "urgent",
+      "status": "completed",
+      "requested_at": "2026-02-24T07:50:00Z",
+      "updated_at": "2026-02-24T08:28:00Z",
+      "requested_by": "dispatcher.charlie",
+      "assigned_to": "porter-03"
+    }
+  ]
+}

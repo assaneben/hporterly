@@ -1,0 +1,55 @@
+name: Commercial License Request
+description: Request proprietary licensing information for Hporterly
+title: "[Commercial License]: "
+labels:
+  - commercial-license
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request proprietary licensing / OEM / closed-source integration terms.
+        Do not post secrets or regulated data.
+  - type: input
+    id: company
+    attributes:
+      label: Company / organization
+      placeholder: Example Health Tech Company
+    validations:
+      required: true
+  - type: dropdown
+    id: use_case
+    attributes:
+      label: Primary deployment model
+      options:
+        - SaaS
+        - On-prem
+        - Hybrid
+        - OEM / white-label
+    validations:
+      required: true
+  - type: textarea
+    id: volume
+    attributes:
+      label: Estimated volume and scope
+      description: Number of sites, users, and approximate request volume
+      placeholder: 5 sites, 200 users, about 2,000 transfer requests/day
+    validations:
+      required: true
+  - type: textarea
+    id: sla
+    attributes:
+      label: SLA / support needs
+      description: Business hours vs 24/7, response targets, security review expectations
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Contact email
+      placeholder: team@example.com
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes

@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS audit_logs (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), actor VARCHAR(120) NOT NULL, action VARCHAR(120) NOT NULL, resource_type VARCHAR(120) NOT NULL, resource_id VARCHAR(120) NOT NULL, details JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());

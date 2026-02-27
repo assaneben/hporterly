@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: hporterly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hporterly
+      POSTGRES_USER: hporterly_user
+      POSTGRES_PASSWORD: change_me_placeholder
+    ports:
+      - "5432:5432"
+    volumes:
+      - hporterly_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hporterly_user -d hporterly"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - hporterly_net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hporterly-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      DATABASE_URL: postgres://hporterly_user:change_me_placeholder@db:5432/hporterly
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - hporterly_net
+
+  frontend:
+    build:
+      context: ../Hporterly-frontend
+      dockerfile: Dockerfile
+    container_name: hporterly-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    networks:
+      - hporterly_net
+
+volumes:
+  hporterly_db_data:
+
+networks:
+  hporterly_net:
+    driver: bridge

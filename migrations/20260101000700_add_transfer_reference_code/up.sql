@@ -1,0 +1,1 @@
+ALTER TABLE transfers ADD COLUMN IF NOT EXISTS reference_code VARCHAR(64);

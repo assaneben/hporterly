@@ -1,0 +1,3047 @@
+{
+  "generated_at": "2026-02-25T00:52:18.070258",
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "handler_fn": "login",
+      "handler_file": "backend/src/handlers/auth.rs",
+      "handler_line": 9,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AuthService",
+          "method": "login"
+        }
+      ],
+      "primary_service": {
+        "service": "AuthService",
+        "method": "login"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/auth.rs",
+        "line": 22,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "handler_fn": "logout",
+      "handler_file": "backend/src/handlers/auth.rs",
+      "handler_line": 27,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "handler_fn": "me",
+      "handler_file": "backend/src/handlers/auth.rs",
+      "handler_line": 20,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AuthService",
+          "method": "me"
+        }
+      ],
+      "primary_service": {
+        "service": "AuthService",
+        "method": "me"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/auth.rs",
+        "line": 53,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "handler_fn": "api_health",
+      "handler_file": "backend/src/handlers/health.rs",
+      "handler_line": 15,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/help-requests/{id}/respond",
+      "handler_fn": "respond_to_help",
+      "handler_file": "backend/src/handlers/tickets/help.rs",
+      "handler_line": 45,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketHelpService",
+          "method": "respond_to_help"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketHelpService",
+        "method": "respond_to_help"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_help.rs",
+        "line": 83,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "brancardier"
+        ],
+        "guard_notes": [
+          "guard detecte: brancardier uniquement"
+        ],
+        "inferred_policy": "allowlist:brancardier"
+      },
+      "inferred_allow_roles": [
+        "brancardier"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications",
+      "handler_fn": "list_notifications",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 10,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "get_user_notifications_filtered"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "get_user_notifications_filtered"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 366,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/notifications/mark-all-read",
+      "handler_fn": "mark_all_notifications_read",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 91,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "mark_all_as_read"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "mark_all_as_read"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 595,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/notifications/mark-read",
+      "handler_fn": "mark_notifications_read",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 72,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "mark_as_read"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "mark_as_read"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 580,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications/message-recipients",
+      "handler_fn": "list_message_recipients",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 146,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "list_active_admin_recipients"
+        },
+        {
+          "service": "NotificationService",
+          "method": "list_active_porter_recipients"
+        },
+        {
+          "service": "NotificationService",
+          "method": "list_active_demandeur_recipients"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "list_active_admin_recipients"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 397,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications/preferences",
+      "handler_fn": "get_preferences",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 108,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "get_or_create_preferences"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "get_or_create_preferences"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 609,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/notifications/preferences",
+      "handler_fn": "update_preferences",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 124,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "update_preferences"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "update_preferences"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 636,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/notifications/send-message",
+      "handler_fn": "send_message_to_admins",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 170,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "find_user_ids_by_roles"
+        },
+        {
+          "service": "NotificationService",
+          "method": "resolve_active_user_id_by_role"
+        },
+        {
+          "service": "NotificationService",
+          "method": "resolve_active_user_display"
+        },
+        {
+          "service": "NotificationService",
+          "method": "resolve_active_porter_user_id"
+        },
+        {
+          "service": "NotificationService",
+          "method": "resolve_active_porter_display"
+        },
+        {
+          "service": "NotificationService",
+          "method": "user_message"
+        },
+        {
+          "service": "NotificationService",
+          "method": "persist_if_enabled"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "find_user_ids_by_roles"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 681,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications/unread-count",
+      "handler_fn": "get_unread_count",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 55,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "count_unread"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "count_unread"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 571,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/notifications/{notification_id}",
+      "handler_fn": "delete_notification",
+      "handler_file": "backend/src/handlers/notifications.rs",
+      "handler_line": 409,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "NotificationService",
+          "method": "delete_user_notification"
+        }
+      ],
+      "primary_service": {
+        "service": "NotificationService",
+        "method": "delete_user_notification"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/notification.rs",
+        "line": 383,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/patients",
+      "handler_fn": "search_patients",
+      "handler_file": "backend/src/handlers/patients.rs",
+      "handler_line": 9,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PatientQueryService",
+          "method": "search"
+        }
+      ],
+      "primary_service": {
+        "service": "PatientQueryService",
+        "method": "search"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/patients.rs",
+        "line": 9,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/porters",
+      "handler_fn": "list_porters",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 8,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "list_porters"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "list_porters"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 18,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/porters",
+      "handler_fn": "create_porter",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 56,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "create_porter"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "create_porter"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 94,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "administrateur"
+        ],
+        "guard_notes": [
+          "guard detecte: administrateur uniquement"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/porters/available",
+      "handler_fn": "list_available_porters",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 18,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "list_available_porters"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "list_available_porters"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 24,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/porters/me/help-requests",
+      "handler_fn": "get_my_help_requests",
+      "handler_file": "backend/src/handlers/tickets/help.rs",
+      "handler_line": 76,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketHelpService",
+          "method": "get_my_pending_help_requests"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketHelpService",
+        "method": "get_my_pending_help_requests"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_help.rs",
+        "line": 128,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "brancardier"
+        ],
+        "guard_notes": [
+          "guard detecte: brancardier uniquement"
+        ],
+        "inferred_policy": "allowlist:brancardier"
+      },
+      "inferred_allow_roles": [
+        "brancardier"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/porters/{id}",
+      "handler_fn": "get_porter",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 28,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "get_porter"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "get_porter"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 31,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/porters/{id}/skills",
+      "handler_fn": "update_porter_skills",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 67,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "update_porter_skills"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "update_porter_skills"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 161,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "administrateur"
+        ],
+        "guard_notes": [
+          "guard detecte: administrateur uniquement"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/porters/{id}/status",
+      "handler_fn": "update_porter_status",
+      "handler_file": "backend/src/handlers/porters.rs",
+      "handler_line": 39,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PorterManagementService",
+          "method": "update_porter_status"
+        }
+      ],
+      "primary_service": {
+        "service": "PorterManagementService",
+        "method": "update_porter_status"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/porter_management.rs",
+        "line": 37,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "brancardier",
+          "demandeur"
+        ],
+        "guard_notes": [
+          "guard detecte: demandeur interdit"
+        ],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/priority-rules",
+      "handler_fn": "get_priority_rules",
+      "handler_file": "backend/src/handlers/priority_rules.rs",
+      "handler_line": 147,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "service_calls": [
+        {
+          "service": "PriorityRulesService",
+          "method": "ensure_rules_config"
+        }
+      ],
+      "primary_service": {
+        "service": "PriorityRulesService",
+        "method": "ensure_rules_config"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/priority_rules.rs",
+        "line": 300,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "special_policy": null,
+      "inference_source": "handler_helper",
+      "confidence": "elevee"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/priority-rules",
+      "handler_fn": "update_priority_rules",
+      "handler_file": "backend/src/handlers/priority_rules.rs",
+      "handler_line": 197,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "service_calls": [
+        {
+          "service": "PriorityRulesService",
+          "method": "ensure_rules_config"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "sanitize_rules_json"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "update_rules_config"
+        },
+        {
+          "service": "AuditService",
+          "method": "log_action"
+        }
+      ],
+      "primary_service": {
+        "service": "PriorityRulesService",
+        "method": "ensure_rules_config"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/priority_rules.rs",
+        "line": 300,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "special_policy": null,
+      "inference_source": "handler_helper",
+      "confidence": "elevee"
+    },
+    {
+      "method": "GET",
+      "path": "/api/priority-rules/default",
+      "handler_fn": "get_priority_rules_default",
+      "handler_file": "backend/src/handlers/priority_rules.rs",
+      "handler_line": 165,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "service_calls": [
+        {
+          "service": "PriorityRulesService",
+          "method": "default_rules_json"
+        }
+      ],
+      "primary_service": {
+        "service": "PriorityRulesService",
+        "method": "default_rules_json"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/priority_rules.rs",
+        "line": 19,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "special_policy": null,
+      "inference_source": "handler_helper",
+      "confidence": "elevee"
+    },
+    {
+      "method": "POST",
+      "path": "/api/priority-rules/restore-default",
+      "handler_fn": "restore_priority_rules_default",
+      "handler_file": "backend/src/handlers/priority_rules.rs",
+      "handler_line": 258,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "service_calls": [
+        {
+          "service": "PriorityRulesService",
+          "method": "ensure_rules_config"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "sanitize_rules_json"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "default_rules_json"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "restore_default_config"
+        },
+        {
+          "service": "AuditService",
+          "method": "log_action"
+        }
+      ],
+      "primary_service": {
+        "service": "PriorityRulesService",
+        "method": "ensure_rules_config"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/priority_rules.rs",
+        "line": 300,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "special_policy": null,
+      "inference_source": "handler_helper",
+      "confidence": "elevee"
+    },
+    {
+      "method": "GET",
+      "path": "/api/priority-rules/runtime",
+      "handler_fn": "get_priority_rules_runtime",
+      "handler_file": "backend/src/handlers/priority_rules.rs",
+      "handler_line": 176,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "PriorityRulesService",
+          "method": "ensure_rules_config"
+        },
+        {
+          "service": "PriorityRulesService",
+          "method": "sanitize_rules_json"
+        }
+      ],
+      "primary_service": {
+        "service": "PriorityRulesService",
+        "method": "ensure_rules_config"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/priority_rules.rs",
+        "line": 300,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ready",
+      "handler_fn": "api_ready",
+      "handler_file": "backend/src/handlers/health.rs",
+      "handler_line": 50,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/equipment",
+      "handler_fn": "list_equipment_admin",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 80,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_equipment_admin"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_equipment_admin"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 201,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/referentials/equipment",
+      "handler_fn": "create_equipment",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 98,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "create_equipment"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "create_equipment"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 214,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/equipment/active",
+      "handler_fn": "list_equipment_active",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 89,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_equipment_active"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_equipment_active"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 208,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/equipment/{id}",
+      "handler_fn": "deactivate_equipment",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 124,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "deactivate_equipment"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "deactivate_equipment"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 255,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/referentials/equipment/{id}",
+      "handler_fn": "update_equipment",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 108,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "update_equipment"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "update_equipment"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 231,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/equipment/{id}/hard",
+      "handler_fn": "hard_delete_equipment",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 135,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "hard_delete_equipment"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "hard_delete_equipment"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 267,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/services",
+      "handler_fn": "list_services_admin",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 14,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_services_admin"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_services_admin"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 24,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/referentials/services",
+      "handler_fn": "create_service",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 32,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "create_service"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "create_service"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 37,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/services/active",
+      "handler_fn": "list_services_active",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 23,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_services_active"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_services_active"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 31,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/services/{id}",
+      "handler_fn": "deactivate_service",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 58,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "deactivate_service"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "deactivate_service"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 173,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/referentials/services/{id}",
+      "handler_fn": "update_service",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 42,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "update_service"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "update_service"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 100,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/services/{id}/hard",
+      "handler_fn": "hard_delete_service",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 68,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "hard_delete_service"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "hard_delete_service"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 185,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/specimens",
+      "handler_fn": "list_specimens_admin",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 217,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_specimens_admin"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_specimens_admin"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 379,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/referentials/specimens",
+      "handler_fn": "create_specimen",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 235,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "create_specimen"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "create_specimen"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 392,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/specimens/active",
+      "handler_fn": "list_specimens_active",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 226,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_specimens_active"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_specimens_active"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 386,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/specimens/{id}",
+      "handler_fn": "deactivate_specimen",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 261,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "deactivate_specimen"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "deactivate_specimen"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 423,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/referentials/specimens/{id}",
+      "handler_fn": "update_specimen",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 245,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "update_specimen"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "update_specimen"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 405,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/specimens/{id}/hard",
+      "handler_fn": "hard_delete_specimen",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 272,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "hard_delete_specimen"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "hard_delete_specimen"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 435,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/transport-modes",
+      "handler_fn": "list_transport_modes_admin",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 148,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_transport_modes_admin"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_transport_modes_admin"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 287,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/referentials/transport-modes",
+      "handler_fn": "create_transport_mode",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 166,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "create_transport_mode"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "create_transport_mode"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 305,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/referentials/transport-modes/active",
+      "handler_fn": "list_transport_modes_active",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 157,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "list_transport_modes_active"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "list_transport_modes_active"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 298,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/transport-modes/{id}",
+      "handler_fn": "deactivate_transport_mode",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 193,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "deactivate_transport_mode"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "deactivate_transport_mode"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 347,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/referentials/transport-modes/{id}",
+      "handler_fn": "update_transport_mode",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 177,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "update_transport_mode"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "update_transport_mode"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 327,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/referentials/transport-modes/{id}/hard",
+      "handler_fn": "hard_delete_transport_mode",
+      "handler_file": "backend/src/handlers/referentials.rs",
+      "handler_line": 204,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "ReferentialCatalogService",
+          "method": "hard_delete_transport_mode"
+        }
+      ],
+      "primary_service": {
+        "service": "ReferentialCatalogService",
+        "method": "hard_delete_transport_mode"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/referentials.rs",
+        "line": 359,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/services",
+      "handler_fn": "list_services",
+      "handler_file": "backend/src/handlers/services.rs",
+      "handler_line": 8,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "HospitalServiceQueryService",
+          "method": "list_all"
+        }
+      ],
+      "primary_service": {
+        "service": "HospitalServiceQueryService",
+        "method": "list_all"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/hospital_services.rs",
+        "line": 9,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets",
+      "handler_fn": "list_tickets",
+      "handler_file": "backend/src/handlers/tickets/core.rs",
+      "handler_line": 17,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketCoreService",
+          "method": "list_payloads_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketCoreService",
+        "method": "list_payloads_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/tickets.rs",
+        "line": 107,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets",
+      "handler_fn": "create_ticket",
+      "handler_file": "backend/src/handlers/tickets/core.rs",
+      "handler_line": 4,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketCoreService",
+          "method": "create_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketCoreService",
+        "method": "create_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/tickets.rs",
+        "line": 59,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/{id}",
+      "handler_fn": "get_ticket",
+      "handler_file": "backend/src/handlers/tickets/core.rs",
+      "handler_line": 30,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketCoreService",
+          "method": "get_payload_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketCoreService",
+        "method": "get_payload_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/tickets.rs",
+        "line": 118,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/assign",
+      "handler_fn": "assign_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 16,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/{id}/available-porters-for-help",
+      "handler_fn": "get_available_porters_for_help",
+      "handler_file": "backend/src/handlers/tickets/help.rs",
+      "handler_line": 92,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketHelpService",
+          "method": "get_available_porters_for_help"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketHelpService",
+        "method": "get_available_porters_for_help"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_help.rs",
+        "line": 144,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/cancel",
+      "handler_fn": "cancel_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 156,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "cancel_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "cancel_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 317,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/co-partners",
+      "handler_fn": "add_co_partner",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 37,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "add_co_partner_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "add_co_partner_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 65,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tickets/{id}/co-partners/{porter_id}",
+      "handler_fn": "remove_co_partner",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 56,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "remove_co_partner_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "remove_co_partner_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 92,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/{id}/equipment-status",
+      "handler_fn": "update_equipment_status",
+      "handler_file": "backend/src/handlers/tickets/updates.rs",
+      "handler_line": 4,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketUpdateService",
+          "method": "update_equipment_status"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketUpdateService",
+        "method": "update_equipment_status"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_updates.rs",
+        "line": 30,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "brancardier",
+          "demandeur"
+        ],
+        "guard_notes": [
+          "guard detecte: demandeur interdit"
+        ],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/hard-delete",
+      "handler_fn": "hard_delete_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 168,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "hard_delete_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "hard_delete_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 368,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/{id}/notes",
+      "handler_fn": "update_ticket_notes",
+      "handler_file": "backend/src/handlers/tickets/updates.rs",
+      "handler_line": 50,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketUpdateService",
+          "method": "update_notes"
+        },
+        {
+          "service": "AuditService",
+          "method": "log_action"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketUpdateService",
+        "method": "update_notes"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_updates.rs",
+        "line": 98,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [
+          "brancardier"
+        ],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/pause",
+      "handler_fn": "pause_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 105,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "pause_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "pause_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 205,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/{id}/priority",
+      "handler_fn": "update_ticket_priority",
+      "handler_file": "backend/src/handlers/tickets/updates.rs",
+      "handler_line": 98,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketUpdateService",
+          "method": "override_priority"
+        },
+        {
+          "service": "AuditService",
+          "method": "log_action"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketUpdateService",
+        "method": "override_priority"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_updates.rs",
+        "line": 139,
+        "explicit_allow_roles": [
+          "admin",
+          "administrateur",
+          "moderateur",
+          "regulateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:admin,administrateur,moderateur,regulateur"
+      },
+      "inferred_allow_roles": [
+        "admin",
+        "administrateur",
+        "moderateur",
+        "regulateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/reassign",
+      "handler_fn": "reassign_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 118,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "reassign_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "reassign_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 232,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/{id}/recommendations",
+      "handler_fn": "get_recommendations",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 93,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "recommendations_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "recommendations_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 179,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/request-help",
+      "handler_fn": "request_help",
+      "handler_file": "backend/src/handlers/tickets/help.rs",
+      "handler_line": 4,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketHelpService",
+          "method": "request_help"
+        },
+        {
+          "service": "NotificationService",
+          "method": "help_requested"
+        },
+        {
+          "service": "NotificationService",
+          "method": "persist_if_enabled"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketHelpService",
+        "method": "request_help"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_help.rs",
+        "line": 25,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "brancardier"
+        ],
+        "guard_notes": [
+          "guard detecte: brancardier uniquement"
+        ],
+        "inferred_policy": "allowlist:brancardier"
+      },
+      "inferred_allow_roles": [
+        "brancardier"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/{id}/status",
+      "handler_fn": "update_ticket_status",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 74,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "update_status_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "update_status_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 119,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/take",
+      "handler_fn": "take_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 26,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets/{id}/unassign",
+      "handler_fn": "unassign_ticket",
+      "handler_file": "backend/src/handlers/tickets/assignment.rs",
+      "handler_line": 137,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "TicketAssignmentActionService",
+          "method": "unassign_from_pool"
+        }
+      ],
+      "primary_service": {
+        "service": "TicketAssignmentActionService",
+        "method": "unassign_from_pool"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/ticket_assignment_actions.rs",
+        "line": 277,
+        "explicit_allow_roles": [],
+        "role_mentions": [],
+        "guard_notes": [],
+        "inferred_policy": null
+      },
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "handler_fn": "list_users",
+      "handler_file": "backend/src/handlers/users.rs",
+      "handler_line": 7,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AdminUserService",
+          "method": "list_users"
+        }
+      ],
+      "primary_service": {
+        "service": "AdminUserService",
+        "method": "list_users"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/admin_users.rs",
+        "line": 56,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "handler_fn": "create_user",
+      "handler_file": "backend/src/handlers/users.rs",
+      "handler_line": 13,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AdminUserService",
+          "method": "create_user"
+        }
+      ],
+      "primary_service": {
+        "service": "AdminUserService",
+        "method": "create_user"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/admin_users.rs",
+        "line": 67,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/users/{id}",
+      "handler_fn": "deactivate_user",
+      "handler_file": "backend/src/handlers/users.rs",
+      "handler_line": 34,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AdminUserService",
+          "method": "deactivate_user"
+        }
+      ],
+      "primary_service": {
+        "service": "AdminUserService",
+        "method": "deactivate_user"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/admin_users.rs",
+        "line": 219,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/users/{id}",
+      "handler_fn": "update_user",
+      "handler_file": "backend/src/handlers/users.rs",
+      "handler_line": 23,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "AdminUserService",
+          "method": "update_user"
+        }
+      ],
+      "primary_service": {
+        "service": "AdminUserService",
+        "method": "update_user"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/admin_users.rs",
+        "line": 128,
+        "explicit_allow_roles": [
+          "administrateur"
+        ],
+        "role_mentions": [],
+        "guard_notes": [
+          "require_role/require_admin detecte"
+        ],
+        "inferred_policy": "allowlist:administrateur"
+      },
+      "inferred_allow_roles": [
+        "administrateur"
+      ],
+      "special_policy": null,
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/users/{id}/gdpr",
+      "handler_fn": "delete_user_gdpr",
+      "handler_file": "backend/src/handlers/gdpr.rs",
+      "handler_line": 11,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "GdprService",
+          "method": "delete_user_data"
+        }
+      ],
+      "primary_service": {
+        "service": "GdprService",
+        "method": "delete_user_data"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/gdpr.rs",
+        "line": 12,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "administrateur"
+        ],
+        "guard_notes": [
+          "guard detecte: administrateur OU proprietaire (self)"
+        ],
+        "inferred_policy": "self_or_admin"
+      },
+      "inferred_allow_roles": [],
+      "special_policy": "self_or_admin",
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/{id}/gdpr/export",
+      "handler_fn": "export_user_data",
+      "handler_file": "backend/src/handlers/gdpr.rs",
+      "handler_line": 22,
+      "auth_class": "auth",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [
+        {
+          "service": "GdprService",
+          "method": "export_user_data"
+        }
+      ],
+      "primary_service": {
+        "service": "GdprService",
+        "method": "export_user_data"
+      },
+      "service_role_clue": {
+        "file": "backend/src/services/gdpr.rs",
+        "line": 58,
+        "explicit_allow_roles": [],
+        "role_mentions": [
+          "administrateur"
+        ],
+        "guard_notes": [
+          "guard detecte: administrateur OU proprietaire (self)"
+        ],
+        "inferred_policy": "self_or_admin"
+      },
+      "inferred_allow_roles": [],
+      "special_policy": "self_or_admin",
+      "inference_source": "service",
+      "confidence": "moyenne"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "HEAD",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1",
+      "handler_fn": "compat_redirect_root",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 17,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "HEAD",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/{tail:.*}",
+      "handler_fn": "compat_redirect",
+      "handler_file": "backend/src/handlers/api_compat.rs",
+      "handler_line": 32,
+      "auth_class": "partial",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/version",
+      "handler_fn": "api_version",
+      "handler_file": "backend/src/handlers/health.rs",
+      "handler_line": 77,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "handler_fn": "health",
+      "handler_file": "backend/src/handlers/health.rs",
+      "handler_line": 7,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    },
+    {
+      "method": "GET",
+      "path": "/ready",
+      "handler_fn": "ready",
+      "handler_file": "backend/src/handlers/health.rs",
+      "handler_line": 23,
+      "auth_class": "public",
+      "handler_explicit_roles": [],
+      "handler_helper_roles": [],
+      "service_calls": [],
+      "primary_service": null,
+      "service_role_clue": null,
+      "inferred_allow_roles": [],
+      "special_policy": null,
+      "inference_source": "none",
+      "confidence": "faible"
+    }
+  ]
+}

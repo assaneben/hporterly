@@ -1,0 +1,38 @@
+# Pack pret a partager - manifeste
+
+Fichier ZIP: HPorterly_pret_a_partager_dev_20260225_012503.zip
+Date generation: 2026-02-25 01:25:03
+Taille ZIP (octets): 708243
+SHA256: b73520999ceaacf8211b7c1f0353226586ff72b27101f9d3bb24129bc21232c2
+
+## Inclus
+- Fichiers inclus: 248
+
+## Exclusions (resume)
+- build artifact: backend/target: 1
+- excluded file name: build_check.txt: 1
+- excluded file name: nul: 1
+- existing zip archive excluded: 3
+- secret file: .env: 1
+- tool/cache dir: __pycache__: 1
+
+## Exclusions detaillees (premieres 200)
+- HPorterly_pret_a_partager_dev_20260225_005313.zip :: existing zip archive excluded
+- HPorterly_pret_a_partager_dev_20260225_005430.zip :: existing zip archive excluded
+- HPorterly_pret_a_partager_dev_20260225_010840.zip :: existing zip archive excluded
+- nul :: excluded file name: nul
+- backend/target :: build artifact: backend/target
+- backend/.env :: secret file: .env
+- backend/build_check.txt :: excluded file name: build_check.txt
+- DOSSIER_REPRISE_DEV/__pycache__ :: tool/cache dir: __pycache__
+
+## Top-level inclus (deduit)
+- DOSSIER_REPRISE_DEV
+- LANCER_APP.bat
+- LANCER_APP.ps1
+- QUICK_LAUNCH.bat
+- RUN_DEBUG.bat
+- backend
+- frontend
+- run.bat
+- scripts

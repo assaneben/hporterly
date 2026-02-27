@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS idempotency_keys (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), scope VARCHAR(64) NOT NULL, key VARCHAR(200) NOT NULL, response_status INTEGER, response_body JSONB, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE(scope, key));

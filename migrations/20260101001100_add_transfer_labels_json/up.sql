@@ -1,0 +1,1 @@
+ALTER TABLE transfers ADD COLUMN IF NOT EXISTS labels JSONB NOT NULL DEFAULT '[]'::jsonb;

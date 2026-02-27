@@ -1,0 +1,52 @@
+name: Bug report
+description: Report a reproducible defect in Hporterly
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting an issue. Do not include real patient or facility data.
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: Transfers list does not refresh after status change
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic/demo data only
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: context
+    attributes:
+      label: Environment
+      options:
+        - Local development
+        - Docker Compose demo
+        - CI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized_logs
+    attributes:
+      label: Sanitized logs / screenshots
+      description: Remove any sensitive information.

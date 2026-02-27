@@ -1,0 +1,55 @@
+{
+  "demo_data_notice": "DEMO DATA — SYNTHETIC / NOT REAL",
+  "dataset": "full_demo_with_fake_patient_fields",
+  "version": "1.0.0",
+  "transfers": [
+    {
+      "request_id": "c3c6f3f0-df57-4f68-81fe-b77d77a67101",
+      "origin_location": "Unit A",
+      "destination_location": "Imaging",
+      "priority": "high",
+      "status": "queued",
+      "requested_at": "2026-02-24T09:00:00Z",
+      "updated_at": "2026-02-24T09:00:00Z",
+      "requested_by": "dispatcher.delta",
+      "assigned_to": "porter-01",
+      "patient_name": "Nora Valen",
+      "patient_id": "PT-FAKE-1001",
+      "dob": "1982-04-13",
+      "room": "R-101",
+      "notes": "Synthetic demo note: escort for scheduled imaging slot."
+    },
+    {
+      "request_id": "fdc36908-aacd-4b4c-be56-0b8b8ad1e902",
+      "origin_location": "Unit C",
+      "destination_location": "Lab",
+      "priority": "routine",
+      "status": "assigned",
+      "requested_at": "2026-02-24T09:12:00Z",
+      "updated_at": "2026-02-24T09:17:00Z",
+      "requested_by": "dispatcher.echo",
+      "assigned_to": "porter-02",
+      "patient_name": "Ilan Mercer",
+      "patient_id": "PT-FAKE-1002",
+      "dob": "1975-11-02",
+      "room": "R-202",
+      "notes": "Synthetic demo note: wheelchair transfer requested."
+    },
+    {
+      "request_id": "8f7bdb61-1f1b-4fbe-8e7b-a86ca7ea4303",
+      "origin_location": "Recovery",
+      "destination_location": "Unit B",
+      "priority": "urgent",
+      "status": "completed",
+      "requested_at": "2026-02-24T08:40:00Z",
+      "updated_at": "2026-02-24T09:05:00Z",
+      "requested_by": "dispatcher.foxtrot",
+      "assigned_to": "porter-03",
+      "patient_name": "Sara Quill",
+      "patient_id": "PT-FAKE-1003",
+      "dob": "1990-07-28",
+      "room": "R-315",
+      "notes": "Synthetic demo note: return to unit after procedure."
+    }
+  ]
+}

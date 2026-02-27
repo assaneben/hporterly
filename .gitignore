@@ -1,0 +1,13 @@
+/target
+**/*.rs.bk
+.env
+.env.local
+*.log
+.idea/
+.vscode/
+.DS_Store
+coverage/
+__pycache__/
+*.pyc
+*.exe
+docs/dev-handoff/16_ANNEXES_CONFIDENTIELLES*.md

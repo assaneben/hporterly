@@ -1,0 +1,1 @@
+ALTER TABLE transfers DROP COLUMN IF EXISTS due_at;

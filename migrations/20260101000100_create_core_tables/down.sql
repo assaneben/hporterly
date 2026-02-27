@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS transfer_events;
+DROP TABLE IF EXISTS transfers;
+DROP TABLE IF EXISTS users;

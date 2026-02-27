@@ -1,0 +1,18 @@
+﻿# Fichiers cles a partager (base)
+# Completer avec vos fichiers spec/captures/tests si necessaire
+
+[OK] LANCER_APP.ps1
+[OK] LANCER_APP.bat
+[OK] QUICK_LAUNCH.bat
+[OK] run.bat
+[OK] RUN_DEBUG.bat
+[OK] backend/Cargo.toml
+[OK] backend/Cargo.lock
+[OK] backend/.env.example
+[OK] backend/diesel.toml
+[OK] backend/seed_data.sql
+[OK] backend/seed_patient.sql
+[OK] frontend/index.html
+[OK] frontend/app.js
+[OK] frontend/service-worker.js
+[OK] frontend/manifest.json

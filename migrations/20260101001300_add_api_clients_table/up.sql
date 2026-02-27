@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS api_clients (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), client_name VARCHAR(120) NOT NULL, client_key_hash TEXT NOT NULL, is_active BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW());

@@ -1,0 +1,42 @@
+name: Feature request
+description: Propose an enhancement for Hporterly
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the operational need and proposed outcome. Keep examples generic.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact area
+      options:
+        - Queue / dispatch
+        - Status tracking
+        - Notifications / realtime
+        - Offline mode
+        - Integrations
+        - Security / compliance
+        - Developer experience
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout considerations
