@@ -1,5 +1,9 @@
 # Hporterly
 
+<p align="center">
+  <img src="assets/logo.png" alt="HPorterly Logo" width="400" />
+</p>
+
 **Hospital Patient Transfer Coordination & Operations System**
 
 ![CI](https://img.shields.io/github/actions/workflow/status/assaneben/Hporterly/ci.yml?branch=main&label=CI)
