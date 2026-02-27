@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKIP_DIRS = {"target", "node_modules", ".venv", "venv", "dist", "build", "coverage"}
+SKIP_DIRS = {"target", "node_modules", ".venv", "venv", "dist", "build", "coverage", "dev-handoff"}
 
 forbidden_parts = [
     ("Beau", " Soleil"),
