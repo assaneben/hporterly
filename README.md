@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="HPorterly Logo" width="400" />
 </p>
 
-**Hospital Patient Transfer Coordination & Operations System**
+**Solution SaaS de gestion du brancardage et des flux patients**
 
 ![CI](https://img.shields.io/github/actions/workflow/status/assaneben/Hporterly/ci.yml?branch=main&label=CI)
 ![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)
