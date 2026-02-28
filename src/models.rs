@@ -18,8 +18,10 @@ pub enum TransferStatus {
     Queued,
     Assigned,
     InProgress,
+    Arrived,
     Completed,
     Cancelled,
+    Suspended,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
