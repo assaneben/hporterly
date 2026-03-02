@@ -1,0 +1,23 @@
+DROP INDEX IF EXISTS idx_tickets_visible;
+DROP INDEX IF EXISTS idx_tickets_archived;
+
+ALTER TABLE tickets DROP COLUMN IF EXISTS motif;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_ipp;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_sex;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_dob;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_last_name;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_first_name;
+ALTER TABLE tickets DROP COLUMN IF EXISTS other_precautions;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_icu;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_dialysis;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_psychiatry;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_bariatric;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_over_120kg;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_confused;
+ALTER TABLE tickets DROP COLUMN IF EXISTS patient_contentious;
+ALTER TABLE tickets DROP COLUMN IF EXISTS is_visible_to_porters;
+ALTER TABLE tickets DROP COLUMN IF EXISTS activation_minutes_before;
+ALTER TABLE tickets DROP COLUMN IF EXISTS reservation_locked_at;
+ALTER TABLE tickets DROP COLUMN IF EXISTS reservation_locked_by;
+ALTER TABLE tickets DROP COLUMN IF EXISTS archived_at;
+ALTER TABLE tickets DROP COLUMN IF EXISTS is_archived;

@@ -1,0 +1,19 @@
+pub mod audit_logs;
+pub mod help_requests;
+pub mod hospital_services;
+pub mod patients;
+pub mod porters;
+pub mod referentials;
+pub mod ticket_assignments;
+pub mod tickets;
+pub mod users;
+
+pub use audit_logs::*;
+pub use help_requests::*;
+pub use hospital_services::*;
+pub use patients::*;
+pub use porters::*;
+pub use referentials::*;
+pub use ticket_assignments::*;
+pub use tickets::*;
+pub use users::*;

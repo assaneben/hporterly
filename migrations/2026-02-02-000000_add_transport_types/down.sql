@@ -1,0 +1,16 @@
+DROP TABLE IF EXISTS help_requests;
+ALTER TABLE tickets DROP COLUMN IF EXISTS transport_type;
+ALTER TABLE tickets DROP COLUMN IF EXISTS transport_subtype;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_recipient_patient_id;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_recipient_patient_name;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_size;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_return_service;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_delivered;
+ALTER TABLE tickets DROP COLUMN IF EXISTS equipment_label_returned;
+ALTER TABLE tickets DROP COLUMN IF EXISTS laboratory_name;
+ALTER TABLE tickets DROP COLUMN IF EXISTS specimen_types;
+ALTER TABLE tickets DROP COLUMN IF EXISTS notes_for_reception;
+ALTER TABLE tickets DROP COLUMN IF EXISTS help_requested;
+ALTER TABLE tickets DROP COLUMN IF EXISTS help_porter_id;
+ALTER TABLE tickets DROP COLUMN IF EXISTS help_status;
+ALTER TABLE tickets DROP COLUMN IF EXISTS help_requested_at;

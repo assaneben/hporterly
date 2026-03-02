@@ -1,0 +1,44 @@
+pub mod admin_users;
+pub mod audit;
+pub mod auth;
+pub mod business_rules;
+pub mod dispatch;
+pub mod gdpr;
+pub mod hospital_services;
+pub mod notification;
+pub mod patients;
+pub mod porter_management;
+pub mod priority_rules;
+pub mod referentials;
+pub mod ticket_assignment_actions;
+pub mod ticket_assignment_workflows;
+pub mod ticket_assignments;
+pub mod ticket_help;
+pub mod ticket_lifecycle;
+pub mod ticket_updates;
+pub mod tickets;
+pub mod validator;
+
+pub use admin_users::*;
+pub use audit::*;
+pub use auth::*;
+pub use business_rules::*;
+pub use dispatch::*;
+pub use gdpr::*;
+pub use hospital_services::*;
+pub use notification::*;
+pub use patients::*;
+pub use porter_management::*;
+pub use priority_rules::*;
+pub use referentials::*;
+pub use ticket_assignment_actions::*;
+pub use ticket_assignment_workflows::*;
+pub use ticket_assignments::*;
+pub use ticket_help::*;
+pub use ticket_lifecycle::*;
+pub use ticket_updates::*;
+pub use tickets::*;
+pub use validator::*;
+
+#[cfg(test)]
+mod auth_test;

@@ -1,0 +1,2 @@
+-- Rollback: pas possible de distinguer les anciens régulateurs des admins originaux
+-- On ne fait rien par sécurité
