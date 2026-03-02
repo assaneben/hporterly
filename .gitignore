@@ -1,13 +1,46 @@
-/target
-**/*.rs.bk
+# Environment variables
 .env
 .env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Next.js build output
+.next/
+out/
+
+# Production build
+dist/
+build/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 *.log
+.pnpm-debug.log*
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# IDE files
 .idea/
 .vscode/
 .DS_Store
-coverage/
-__pycache__/
-*.pyc
-*.exe
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Documentation / Confidential
 docs/dev-handoff/16_ANNEXES_CONFIDENTIELLES*.md

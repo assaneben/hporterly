@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid()) @db.VarChar(255)
+  username      String   @unique @db.VarChar(100)
+  passwordHash  String   @map("password_hash") @db.VarChar(255)
+  role          String   @db.VarChar(50) // demandeur | brancardier | regulateur | administrateur
+  firstName     String   @map("first_name") @db.VarChar(100)
+  lastName      String   @map("last_name") @db.VarChar(100)
+  email         String?  @db.VarChar(255)
+  service       String?  @db.VarChar(255)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  porter            Porter?
+  ticketsRequested  Ticket[]                 @relation("requester")
+  notifications     Notification[]
+  notificationPrefs NotificationPreference?
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model Porter {
+  id                     String   @id @default(uuid()) @db.VarChar(255)
+  userId                 String   @unique @map("user_id") @db.VarChar(255)
+  status                 String   @default("available") @db.VarChar(50) // available | busy | break | offline
+  skills                 String[] @default([])
+  currentLocation        String?  @map("current_location") @db.VarChar(255)
+  completedMissionsToday Int      @default(0) @map("completed_missions_today")
+  totalMissions          Int      @default(0) @map("total_missions")
+  rating                 Float    @default(3.0)
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  user              User               @relation(fields: [userId], references: [id])
+  ticketAssignments TicketAssignment[]
+
+  @@map("porters")
+}
+
+model Ticket {
+  id                String    @id @default(uuid()) @db.VarChar(255)
+  patientId         String    @map("patient_id") @db.VarChar(255)
+  patientName       String    @map("patient_name") @db.VarChar(255)
+  origin            String    @db.VarChar(255)
+  destination       String    @db.VarChar(255)
+  priority          Int       @default(3) // 1=Urgence, 2=Prioritaire, 3=Standard, 4=Programme
+  mode              String    @default("brancard") @db.VarChar(50)
+  status            String    @default("pending") @db.VarChar(50)
+  porterId          String?   @map("porter_id") @db.VarChar(255)
+  requesterId       String    @map("requester_id") @db.VarChar(255)
+
+  // Exigences medicales
+  needsO2           Boolean   @default(false) @map("needs_o2")
+  needsPerfusion    Boolean   @default(false) @map("needs_perfusion")
+  isolation         Boolean   @default(false)
+  patientWeight     Int?      @map("patient_weight")
+  patientAgitated   Boolean   @default(false) @map("patient_agitated")
+  patientMonitoring Boolean   @default(false) @map("patient_monitoring")
+  needsTwoPorters   Boolean   @default(false) @map("needs_two_porters")
+
+  // Notes et planning
+  notes         String?   @db.Text
+  scheduledTime DateTime? @map("scheduled_time")
+
+  // Timestamps
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  completedAt DateTime? @map("completed_at")
+
+  // Transport v2.0 : type et sous-type
+  transportType    String @default("PATIENT") @map("transport_type") @db.VarChar(50)
+  transportSubtype String @default("TP-BRANC") @map("transport_subtype") @db.VarChar(50)
+
+  // Champs Materiel
+  equipmentRecipientPatientId   String?  @map("equipment_recipient_patient_id") @db.VarChar(255)
+  equipmentRecipientPatientName String?  @map("equipment_recipient_patient_name") @db.VarChar(255)
+  equipmentSize                 String?  @map("equipment_size") @db.VarChar(10)
+  equipmentReturnService        String?  @map("equipment_return_service") @db.VarChar(255)
+  equipmentDelivered            Boolean? @map("equipment_delivered")
+  equipmentLabelReturned        Boolean? @map("equipment_label_returned")
+
+  // Champs Prelevements
+  laboratoryName    String?  @map("laboratory_name") @db.VarChar(50)
+  specimenTypes     String[] @default([]) @map("specimen_types")
+  notesForReception String?  @map("notes_for_reception") @db.Text
+
+  // Demande d'aide
+  helpRequested   Boolean?  @default(false) @map("help_requested")
+  helpPorterId    String?   @map("help_porter_id") @db.VarChar(255)
+  helpStatus      String?   @map("help_status") @db.VarChar(50)
+  helpRequestedAt DateTime? @map("help_requested_at")
+
+  // Archivage
+  isArchived Boolean   @default(false) @map("is_archived")
+  archivedAt DateTime? @map("archived_at")
+
+  // Reservation temporaire
+  reservationLockedBy String?   @map("reservation_locked_by") @db.VarChar(255)
+  reservationLockedAt DateTime? @map("reservation_locked_at")
+
+  // Visibilite RDV programme
+  activationMinutesBefore Int?    @map("activation_minutes_before")
+  isVisibleToPorters      Boolean @default(true) @map("is_visible_to_porters")
+
+  // Vigilances patient
+  patientContentious Boolean @default(false) @map("patient_contentious")
+  patientConfused    Boolean @default(false) @map("patient_confused")
+  patientOver120kg   Boolean @default(false) @map("patient_over_120kg")
+  patientBariatric   Boolean @default(false) @map("patient_bariatric")
+  patientPsychiatry  Boolean @default(false) @map("patient_psychiatry")
+  patientDialysis    Boolean @default(false) @map("patient_dialysis")
+  patientIcu         Boolean @default(false) @map("patient_icu")
+  otherPrecautions   String? @map("other_precautions") @db.Text
+
+  // Identite patient decomposee
+  patientFirstName String?   @map("patient_first_name") @db.VarChar(255)
+  patientLastName  String?   @map("patient_last_name") @db.VarChar(255)
+  patientDob       DateTime? @map("patient_dob") @db.Date
+  patientSex       String?   @map("patient_sex") @db.VarChar(10)
+  patientIpp       String?   @map("patient_ipp") @db.VarChar(50)
+  motif            String?   @db.VarChar(50)
+
+  // Relations
+  requester     User               @relation("requester", fields: [requesterId], references: [id])
+  assignments   TicketAssignment[]
+  notifications Notification[]
+  helpRequests  HelpRequest[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([porterId])
+  @@index([requesterId])
+  @@index([transportType])
+  @@index([createdAt])
+  @@map("tickets")
+}
+
+model TicketAssignment {
+  id         String    @id @default(uuid()) @db.VarChar(255)
+  ticketId   String    @map("ticket_id") @db.VarChar(255)
+  porterId   String    @map("porter_id") @db.VarChar(255)
+  role       String    @default("primary") @db.VarChar(20) // primary | co_partner
+  assignedAt DateTime  @default(now()) @map("assigned_at")
+  removedAt  DateTime? @map("removed_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+  porter Porter @relation(fields: [porterId], references: [id])
+
+  @@map("ticket_assignments")
+}
+
+model Notification {
+  id               String   @id @default(uuid()) @db.VarChar(255)
+  userId           String   @map("user_id") @db.VarChar(255)
+  notificationType String   @map("notification_type") @db.VarChar(50)
+  title            String   @db.VarChar(255)
+  message          String   @db.Text
+  priority         String   @default("normal") @db.VarChar(20)
+  data             Json?
+  isRead           Boolean  @default(false) @map("is_read")
+  relatedTicketId  String?  @map("related_ticket_id") @db.VarChar(255)
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id])
+  ticket Ticket? @relation(fields: [relatedTicketId], references: [id])
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id           String   @id @default(uuid()) @db.VarChar(255)
+  userId       String   @unique @map("user_id") @db.VarChar(255)
+  preferences  Json     @default("{}")
+  soundEnabled Boolean  @default(true) @map("sound_enabled")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notification_preferences")
+}
+
+model Patient {
+  id          String    @id @db.VarChar(50)
+  firstName   String    @map("first_name") @db.VarChar(100)
+  lastName    String    @map("last_name") @db.VarChar(100)
+  age         Int?
+  gender      String?   @db.Char(1)
+  service     String?   @db.VarChar(100)
+  room        String?   @db.VarChar(50)
+  building    String?   @db.VarChar(50)
+  floor       String?   @db.VarChar(50)
+  dateOfBirth DateTime? @map("date_of_birth") @db.Date
+  sex         String?   @db.VarChar(10)
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+
+  @@map("patients")
+}
+
+model HelpRequest {
+  id                 String    @id @default(uuid()) @db.VarChar(255)
+  ticketId           String    @map("ticket_id") @db.VarChar(255)
+  requestingPorterId String    @map("requesting_porter_id") @db.VarChar(255)
+  requestedPorterId  String    @map("requested_porter_id") @db.VarChar(255)
+  status             String    @default("pending") @db.VarChar(50)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  respondedAt        DateTime? @map("responded_at")
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+
+  @@map("help_requests")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.VarChar(255)
+  userId     String   @map("user_id") @db.VarChar(255)
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id") @db.VarChar(255)
+  oldValue   Json?    @map("old_value")
+  newValue   Json?    @map("new_value")
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  userAgent  String?  @map("user_agent") @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model PriorityRulesConfig {
+  id        String   @id @default(uuid()) @db.VarChar(255)
+  rulesJson Json     @map("rules_json")
+  isActive  Boolean  @default(true) @map("is_active")
+  updatedBy String?  @map("updated_by") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("priority_rules_config")
+}
+
+model ReferentialService {
+  id           String   @id @default(uuid()) @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  building     String?  @db.VarChar(100)
+  floor        String?  @db.VarChar(50)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  siteId       String   @map("site_id") @db.VarChar(100)
+  siteName     String   @map("site_name") @db.VarChar(255)
+  buildingId   String   @map("building_id") @db.VarChar(100)
+  buildingName String   @map("building_name") @db.VarChar(255)
+  levelId      String   @map("level_id") @db.VarChar(100)
+  levelName    String   @map("level_name") @db.VarChar(255)
+  zoneId       String   @map("zone_id") @db.VarChar(100)
+  zoneName     String   @map("zone_name") @db.VarChar(255)
+  subzoneId    String?  @map("subzone_id") @db.VarChar(100)
+  subzoneName  String?  @map("subzone_name") @db.VarChar(255)
+
+  @@map("referential_services")
+}
+
+model ReferentialEquipment {
+  id             String   @id @default(uuid()) @db.VarChar(255)
+  label          String   @db.VarChar(255)
+  sizes          String[] @default([])
+  requiredFields Json     @map("required_fields")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("referential_equipment")
+}
+
+model ReferentialTransportMode {
+  id        String  @id @default(uuid()) @db.VarChar(255)
+  label     String  @db.VarChar(255)
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  @@map("referential_transport_modes")
+}
+
+model ReferentialSpecimen {
+  id        String   @id @default(uuid()) @db.VarChar(255)
+  label     String   @db.VarChar(255)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("referential_specimens")
+}

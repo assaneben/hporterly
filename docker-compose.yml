@@ -1,66 +1,51 @@
-version: "3.9"
-
 services:
   db:
-    image: postgres:17-alpine
+    image: postgres:15
     container_name: hporterly-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: hporterly
-      POSTGRES_USER: hporterly_user
-      POSTGRES_PASSWORD: change_me_placeholder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - hporterly_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hporterly_user -d hporterly"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    networks:
-      - hporterly_net
+      - hporterly_pgdata:/var/lib/postgresql/data
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:20-alpine
     container_name: hporterly-backend
     restart: unless-stopped
+    working_dir: /app
     depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - .env.example
+      - db
     environment:
-      DATABASE_URL: postgres://hporterly_user:change_me_placeholder@db:5432/hporterly
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/hporterly
+      JWT_SECRET: supersecret_hporterly_jwt_key_change_me
+      CORS_ORIGIN: http://localhost:3000
     ports:
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    networks:
-      - hporterly_net
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+    command: sh -c "npm install && npm run prisma:generate && npm run dev"
 
   frontend:
-    build:
-      context: ../Hporterly-frontend
-      dockerfile: Dockerfile
+    image: node:20-alpine
     container_name: hporterly-frontend
     restart: unless-stopped
+    working_dir: /app
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api
     ports:
-      - "8081:80"
-    networks:
-      - hporterly_net
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev"
 
 volumes:
-  hporterly_db_data:
-
-networks:
-  hporterly_net:
-    driver: bridge
+  hporterly_pgdata:

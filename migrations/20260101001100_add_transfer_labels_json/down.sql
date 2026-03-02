@@ -1,1 +1,0 @@
-ALTER TABLE transfers DROP COLUMN IF EXISTS labels;
