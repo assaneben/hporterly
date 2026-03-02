@@ -59,7 +59,12 @@ pub(super) async fn respond_to_help(
     let result =
         TicketHelpService::respond_to_help(&mut conn, &user, help_request_id.as_str(), &response)?;
 
-    log::info!("Help request {} {} by porter {}", help_request_id, result.status, user.id);
+    log::info!(
+        "Help request {} {} by porter {}",
+        help_request_id,
+        result.status,
+        user.id
+    );
 
     Ok(HttpResponse::Ok().json(json!({
         "success": true,

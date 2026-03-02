@@ -52,7 +52,10 @@ impl AuthService {
         let user_info = Self::build_user_info(&mut conn, &user)?;
 
         log::info!("User {} logged in successfully", credentials.username);
-        Ok(LoginResponse { token, user: user_info })
+        Ok(LoginResponse {
+            token,
+            user: user_info,
+        })
     }
 
     pub fn me(pool: &DbPool, user: &User) -> ApiResult<UserInfo> {
@@ -65,10 +68,16 @@ impl AuthService {
     fn verify_password(password: &str, user: &User) -> bool {
         PasswordHash::new(&user.password_hash)
             .map(|parsed_hash| {
-                Argon2::default().verify_password(password.as_bytes(), &parsed_hash).is_ok()
+                Argon2::default()
+                    .verify_password(password.as_bytes(), &parsed_hash)
+                    .is_ok()
             })
             .unwrap_or_else(|err| {
-                log::warn!("Invalid password hash for user '{}': {}", user.username, err);
+                log::warn!(
+                    "Invalid password hash for user '{}': {}",
+                    user.username,
+                    err
+                );
                 false
             })
     }
@@ -84,8 +93,12 @@ impl AuthService {
             exp,
         };
 
-        encode(&Header::default(), &claims, &EncodingKey::from_secret(config.jwt_secret.as_bytes()))
-            .map_err(|e| ApiError::InternalServerError(format!("Token generation error: {}", e)))
+        encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(config.jwt_secret.as_bytes()),
+        )
+        .map_err(|e| ApiError::InternalServerError(format!("Token generation error: {}", e)))
     }
 
     fn build_user_info(conn: &mut diesel::PgConnection, user: &User) -> ApiResult<UserInfo> {

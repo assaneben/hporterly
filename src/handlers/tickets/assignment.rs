@@ -172,7 +172,9 @@ pub(super) async fn cancel_ticket(
         &pool,
         &user,
         ticket_id.as_str(),
-        request.as_ref().and_then(|payload| payload.reason_code.clone()),
+        request
+            .as_ref()
+            .and_then(|payload| payload.reason_code.clone()),
         request.as_ref().and_then(|payload| payload.comment.clone()),
     )?;
     Ok(HttpResponse::Ok().json(updated_ticket))

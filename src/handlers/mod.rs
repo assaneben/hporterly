@@ -1,20 +1,25 @@
+pub mod api_compat;
 pub mod auth;
+pub mod gdpr;
 pub mod health;
-pub mod transfers;
-pub mod ws;
+pub mod notifications;
+pub mod patients;
+pub mod porters;
+pub mod priority_rules;
+pub mod referentials;
+pub mod services;
+pub mod tickets;
+pub mod users;
 
-use actix_web::web;
-
-pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/healthz").route(web::get().to(health::healthz)))
-        .service(web::resource("/ws").route(web::get().to(ws::ws_index)))
-        .service(
-            web::scope("/api/v1")
-                .service(web::resource("/auth/login").route(web::post().to(auth::login)))
-                .service(
-                    web::resource("/transfers")
-                        .route(web::get().to(transfers::list_transfers))
-                        .route(web::post().to(transfers::create_transfer)),
-                ),
-        );
-}
+pub use api_compat::configure as configure_api_compat;
+pub use auth::configure as configure_auth;
+pub use gdpr::configure as configure_gdpr;
+pub use health::configure as configure_health;
+pub use notifications::configure as configure_notifications;
+pub use patients::configure as configure_patients;
+pub use porters::configure as configure_porters;
+pub use priority_rules::configure as configure_priority_rules;
+pub use referentials::configure as configure_referentials;
+pub use services::configure as configure_services;
+pub use tickets::configure as configure_tickets;
+pub use users::configure as configure_users;

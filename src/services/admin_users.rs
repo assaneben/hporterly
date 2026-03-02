@@ -58,7 +58,10 @@ impl AdminUserService {
         let mut conn = Self::conn(pool)?;
         let records = UserRepository::list_with_porter_id(&mut conn)
             .map_err(|e| ApiError::InternalServerError(format!("Failed to load users: {}", e)))?;
-        Ok(records.into_iter().map(|(u, porter_id)| Self::to_response(u, porter_id)).collect())
+        Ok(records
+            .into_iter()
+            .map(|(u, porter_id)| Self::to_response(u, porter_id))
+            .collect())
     }
 
     pub fn create_user(
@@ -76,7 +79,9 @@ impl AdminUserService {
             })?
             .is_some()
         {
-            return Err(ApiError::BadRequest("Ce nom d'utilisateur existe deja".to_string()));
+            return Err(ApiError::BadRequest(
+                "Ce nom d'utilisateur existe deja".to_string(),
+            ));
         }
 
         let new_user = NewUser {
@@ -211,8 +216,9 @@ impl AdminUserService {
             }
         }
 
-        let porter_id =
-            PorterRepository::find_id_by_user_id_optional(&mut conn, &updated.id).ok().flatten();
+        let porter_id = PorterRepository::find_id_by_user_id_optional(&mut conn, &updated.id)
+            .ok()
+            .flatten();
         Ok(Self::to_response(updated, porter_id))
     }
 

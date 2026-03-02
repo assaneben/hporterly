@@ -7,7 +7,10 @@ use serde_json::{json, Value};
 use std::collections::{BTreeSet, HashMap};
 
 fn require_rules_manager(user: &User) -> ApiResult<()> {
-    require_role(user, &["administrateur", "regulateur", "moderateur", "admin"])
+    require_role(
+        user,
+        &["administrateur", "regulateur", "moderateur", "admin"],
+    )
 }
 
 fn build_rule_map(config: &Value) -> HashMap<String, Value> {
@@ -18,7 +21,12 @@ fn build_rule_map(config: &Value) -> HashMap<String, Value> {
         .unwrap_or_default()
         .into_iter()
         .filter_map(|rule| {
-            let id = rule.get("id").and_then(|v| v.as_str()).unwrap_or("").trim().to_string();
+            let id = rule
+                .get("id")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .trim()
+                .to_string();
             if id.is_empty() {
                 None
             } else {
@@ -66,8 +74,11 @@ fn collect_priority_rule_audit_entries(
 
     let old_rule_map = build_rule_map(old_rules);
     let new_rule_map = build_rule_map(new_rules);
-    let rule_ids: BTreeSet<String> =
-        old_rule_map.keys().chain(new_rule_map.keys()).cloned().collect();
+    let rule_ids: BTreeSet<String> = old_rule_map
+        .keys()
+        .chain(new_rule_map.keys())
+        .cloned()
+        .collect();
 
     for rule_id in rule_ids {
         match (old_rule_map.get(&rule_id), new_rule_map.get(&rule_id)) {
@@ -104,8 +115,11 @@ fn collect_priority_rule_audit_entries(
 
     let old_level_map = build_level_map(old_rules);
     let new_level_map = build_level_map(new_rules);
-    let level_ids: BTreeSet<i32> =
-        old_level_map.keys().chain(new_level_map.keys()).copied().collect();
+    let level_ids: BTreeSet<i32> = old_level_map
+        .keys()
+        .chain(new_level_map.keys())
+        .copied()
+        .collect();
 
     for level in level_ids {
         let entity_id = format!("level:N{}", level);

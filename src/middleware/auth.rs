@@ -37,7 +37,9 @@ where
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(AuthMiddlewareService { service: Rc::new(service) }))
+        ready(Ok(AuthMiddlewareService {
+            service: Rc::new(service),
+        }))
     }
 }
 
@@ -108,9 +110,9 @@ where
             Some(cfg) => cfg.clone(),
             None => {
                 return Box::pin(async move {
-                    Err(actix_web::error::ErrorInternalServerError(ApiError::InternalServerError(
-                        "Server configuration missing".to_string(),
-                    )))
+                    Err(actix_web::error::ErrorInternalServerError(
+                        ApiError::InternalServerError("Server configuration missing".to_string()),
+                    ))
                 });
             }
         };

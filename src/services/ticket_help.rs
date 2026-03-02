@@ -29,7 +29,9 @@ impl TicketHelpService {
         request: &CreateHelpRequest,
     ) -> ApiResult<HelpRequestCreationResult> {
         if user.role != "brancardier" {
-            return Err(ApiError::Forbidden("Acces reserve aux brancardiers".to_string()));
+            return Err(ApiError::Forbidden(
+                "Acces reserve aux brancardiers".to_string(),
+            ));
         }
 
         let requester_porter_id = TicketAssignmentService::get_porter_id_for_user(conn, user)?;
@@ -37,7 +39,9 @@ impl TicketHelpService {
             .map_err(|_| ApiError::NotFound(format!("Ticket {} not found", ticket_id)))?;
 
         if ticket.porter_id.as_ref() != Some(&requester_porter_id) {
-            return Err(ApiError::Forbidden("Vous n'etes pas assigne a cette mission".to_string()));
+            return Err(ApiError::Forbidden(
+                "Vous n'etes pas assigne a cette mission".to_string(),
+            ));
         }
 
         let requested_porter = PorterRepository::find_by_id(conn, &request.requested_porter_id)
@@ -85,7 +89,9 @@ impl TicketHelpService {
         response: &RespondToHelpRequest,
     ) -> ApiResult<HelpRequestResponseResult> {
         if user.role != "brancardier" {
-            return Err(ApiError::Forbidden("Acces reserve aux brancardiers".to_string()));
+            return Err(ApiError::Forbidden(
+                "Acces reserve aux brancardiers".to_string(),
+            ));
         }
 
         let responder_porter_id = TicketAssignmentService::get_porter_id_for_user(conn, user)?;
@@ -95,10 +101,16 @@ impl TicketHelpService {
             })?;
 
         if help_request.requested_porter_id != responder_porter_id {
-            return Err(ApiError::Forbidden("Cette demande ne vous concerne pas".to_string()));
+            return Err(ApiError::Forbidden(
+                "Cette demande ne vous concerne pas".to_string(),
+            ));
         }
 
-        let status = if response.accepted { "accepted" } else { "declined" };
+        let status = if response.accepted {
+            "accepted"
+        } else {
+            "declined"
+        };
 
         HelpRequestRepository::set_status_with_responded_at(
             conn,
@@ -114,7 +126,10 @@ impl TicketHelpService {
             ApiError::InternalServerError(format!("Failed to update ticket: {}", e))
         })?;
 
-        Ok(HelpRequestResponseResult { accepted: response.accepted, status: status.to_string() })
+        Ok(HelpRequestResponseResult {
+            accepted: response.accepted,
+            status: status.to_string(),
+        })
     }
 
     pub fn get_my_pending_help_requests(
@@ -122,7 +137,9 @@ impl TicketHelpService {
         user: &User,
     ) -> ApiResult<Vec<HelpRequest>> {
         if user.role != "brancardier" {
-            return Err(ApiError::Forbidden("Acces reserve aux brancardiers".to_string()));
+            return Err(ApiError::Forbidden(
+                "Acces reserve aux brancardiers".to_string(),
+            ));
         }
 
         let porter_id = TicketAssignmentService::get_porter_id_for_user(conn, user)?;

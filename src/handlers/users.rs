@@ -42,5 +42,8 @@ async fn deactivate_user(
 }
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
-    cfg.service(list_users).service(create_user).service(update_user).service(deactivate_user);
+    cfg.service(list_users)
+        .service(create_user)
+        .service(update_user)
+        .service(deactivate_user);
 }

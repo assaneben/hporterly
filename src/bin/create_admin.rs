@@ -14,13 +14,18 @@ async fn main() {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool");
     let mut conn = pool.get().expect("Failed to get connection");
 
     let password = "password";
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
-    let password_hash = argon2.hash_password(password.as_bytes(), &salt).unwrap().to_string();
+    let password_hash = argon2
+        .hash_password(password.as_bytes(), &salt)
+        .unwrap()
+        .to_string();
 
     let new_admin = NewUser {
         id: "admin-real".to_string(),

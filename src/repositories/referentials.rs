@@ -78,7 +78,9 @@ impl ReferentialRepository {
         conn: &mut PgConnection,
         id: &str,
     ) -> QueryResult<ReferentialService> {
-        referential_services::table.find(id).first::<ReferentialService>(conn)
+        referential_services::table
+            .find(id)
+            .first::<ReferentialService>(conn)
     }
 
     pub fn insert_service(
@@ -147,7 +149,9 @@ impl ReferentialRepository {
         conn: &mut PgConnection,
         id: &str,
     ) -> QueryResult<ReferentialEquipment> {
-        referential_equipment::table.find(id).first::<ReferentialEquipment>(conn)
+        referential_equipment::table
+            .find(id)
+            .first::<ReferentialEquipment>(conn)
     }
 
     pub fn insert_equipment(
@@ -214,7 +218,9 @@ impl ReferentialRepository {
         conn: &mut PgConnection,
         id: &str,
     ) -> QueryResult<ReferentialTransportMode> {
-        referential_transport_modes::table.find(id).first::<ReferentialTransportMode>(conn)
+        referential_transport_modes::table
+            .find(id)
+            .first::<ReferentialTransportMode>(conn)
     }
 
     pub fn insert_transport_mode(
@@ -270,7 +276,9 @@ impl ReferentialRepository {
         conn: &mut PgConnection,
         id: &str,
     ) -> QueryResult<ReferentialSpecimen> {
-        referential_specimens::table.find(id).first::<ReferentialSpecimen>(conn)
+        referential_specimens::table
+            .find(id)
+            .first::<ReferentialSpecimen>(conn)
     }
 
     pub fn insert_specimen(

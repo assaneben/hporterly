@@ -30,7 +30,10 @@ async fn export_user_data(
         .insert_header(("Content-Type", "application/json"))
         .insert_header((
             "Content-Disposition",
-            format!("attachment; filename=\"gdpr_export_{}.json\"", user_id.as_str()),
+            format!(
+                "attachment; filename=\"gdpr_export_{}.json\"",
+                user_id.as_str()
+            ),
         ))
         .json(export_data))
 }

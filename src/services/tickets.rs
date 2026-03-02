@@ -31,10 +31,14 @@ pub struct TicketListParams {
 
 impl TicketListParams {
     pub fn from_query(query: &HashMap<String, String>) -> Self {
-        let include_archived =
-            query.get("include_archived").map(|v| v == "true" || v == "1").unwrap_or(false);
+        let include_archived = query
+            .get("include_archived")
+            .map(|v| v == "true" || v == "1")
+            .unwrap_or(false);
         let status = query.get("status").cloned();
-        let priority = query.get("priority").and_then(|value| value.parse::<i32>().ok());
+        let priority = query
+            .get("priority")
+            .and_then(|value| value.parse::<i32>().ok());
         let porter_id = query.get("porter_id").cloned();
         let transport_type = query.get("transport_type").cloned();
         let limit = query
@@ -42,10 +46,21 @@ impl TicketListParams {
             .and_then(|value| value.parse::<i64>().ok())
             .unwrap_or(200)
             .clamp(1, 500);
-        let offset =
-            query.get("offset").and_then(|value| value.parse::<i64>().ok()).unwrap_or(0).max(0);
+        let offset = query
+            .get("offset")
+            .and_then(|value| value.parse::<i64>().ok())
+            .unwrap_or(0)
+            .max(0);
 
-        Self { include_archived, status, priority, porter_id, transport_type, limit, offset }
+        Self {
+            include_archived,
+            status,
+            priority,
+            porter_id,
+            transport_type,
+            limit,
+            offset,
+        }
     }
 }
 
@@ -190,8 +205,11 @@ impl TicketCoreService {
     ) -> NewTicket {
         let is_programmed = request.priority == 4 && request.scheduled_time.is_some();
         let is_visible_to_porters = !is_programmed;
-        let activation_minutes_before =
-            if is_programmed { request.activation_minutes_before.or(Some(30)) } else { None };
+        let activation_minutes_before = if is_programmed {
+            request.activation_minutes_before.or(Some(30))
+        } else {
+            None
+        };
 
         let patient_dob = request
             .patient_dob
@@ -318,7 +336,10 @@ impl TicketReadService {
         params: TicketListParams,
     ) -> ApiResult<Vec<serde_json::Value>> {
         if let Err(err) = TicketRepository::activate_programmed_tickets_visibility(conn) {
-            log::warn!("Failed to auto-activate programmed tickets visibility: {}", err);
+            log::warn!(
+                "Failed to auto-activate programmed tickets visibility: {}",
+                err
+            );
         }
 
         let filters = Self::build_filters(user, params);
@@ -339,9 +360,13 @@ impl TicketReadService {
 
         if user.role == "demandeur" {
             let requester_match = ticket.requester_id == user.id
-                || ticket.requester_id.eq_ignore_ascii_case(user.username.as_str());
+                || ticket
+                    .requester_id
+                    .eq_ignore_ascii_case(user.username.as_str());
             if !requester_match {
-                return Err(ApiError::Forbidden("Acces refuse a cette demande".to_string()));
+                return Err(ApiError::Forbidden(
+                    "Acces refuse a cette demande".to_string(),
+                ));
             }
         }
 
@@ -421,7 +446,9 @@ impl TicketReadService {
         let rows = TicketRepository::find_active_assignments(conn, &ticket_ids)?;
         let mut lookup: TicketAssignmentsLookup = TicketAssignmentsLookup::new();
         for (ticket_id, porter_id, role) in rows {
-            let entry = lookup.entry(ticket_id).or_insert_with(|| (None, Vec::new()));
+            let entry = lookup
+                .entry(ticket_id)
+                .or_insert_with(|| (None, Vec::new()));
 
             match role.as_str() {
                 "supervisor" => {
@@ -454,8 +481,9 @@ impl TicketReadService {
         let rows = TicketRepository::find_requesters(conn, &requester_ids)?;
         let mut lookup = RequesterLookup::new();
         for (id, username, first_name, last_name) in rows {
-            let full_name =
-                format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
+            let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                .trim()
+                .to_string();
             lookup.insert(id, (username.trim().to_string(), full_name));
         }
 
@@ -480,18 +508,32 @@ impl TicketReadService {
                 ticket.requester_id.clone()
             };
 
-            let normalized_username =
-                if username.is_empty() { None } else { Some(username.to_string()) };
-            let normalized_full_name =
-                if full_name.is_empty() { None } else { Some(full_name.to_string()) };
+            let normalized_username = if username.is_empty() {
+                None
+            } else {
+                Some(username.to_string())
+            };
+            let normalized_full_name = if full_name.is_empty() {
+                None
+            } else {
+                Some(full_name.to_string())
+            };
 
             return (display, normalized_username, normalized_full_name);
         }
 
         let fallback = ticket.requester_id.trim().to_string();
-        let display = if fallback.is_empty() { "Inconnu".to_string() } else { fallback.clone() };
+        let display = if fallback.is_empty() {
+            "Inconnu".to_string()
+        } else {
+            fallback.clone()
+        };
 
-        let normalized = if fallback.is_empty() { None } else { Some(fallback) };
+        let normalized = if fallback.is_empty() {
+            None
+        } else {
+            Some(fallback)
+        };
         (display, normalized, None)
     }
 
@@ -515,7 +557,10 @@ impl TicketReadService {
                     .unwrap_or(serde_json::Value::Null),
             );
             let co_partner_ids_json = serde_json::Value::Array(
-                co_partner_ids.iter().map(|id| serde_json::Value::String(id.clone())).collect(),
+                co_partner_ids
+                    .iter()
+                    .map(|id| serde_json::Value::String(id.clone()))
+                    .collect(),
             );
             object.insert("co_partner_ids".to_string(), co_partner_ids_json.clone());
             object.insert("co_partners".to_string(), co_partner_ids_json);
@@ -527,12 +572,21 @@ impl TicketReadService {
 
         let (display, username, full_name) = Self::resolve_requester_identity(ticket, lookup);
         if let Some(object) = payload.as_object_mut() {
-            object.insert("requester_display".to_string(), serde_json::Value::String(display));
+            object.insert(
+                "requester_display".to_string(),
+                serde_json::Value::String(display),
+            );
             if let Some(value) = username {
-                object.insert("requester_username".to_string(), serde_json::Value::String(value));
+                object.insert(
+                    "requester_username".to_string(),
+                    serde_json::Value::String(value),
+                );
             }
             if let Some(value) = full_name {
-                object.insert("requester_full_name".to_string(), serde_json::Value::String(value));
+                object.insert(
+                    "requester_full_name".to_string(),
+                    serde_json::Value::String(value),
+                );
             }
         }
 

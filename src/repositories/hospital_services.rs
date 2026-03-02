@@ -8,6 +8,8 @@ pub struct HospitalServiceRepository;
 
 impl HospitalServiceRepository {
     pub fn list_all(conn: &mut PgConnection) -> QueryResult<Vec<Service>> {
-        services::table.order(services::name.asc()).load::<Service>(conn)
+        services::table
+            .order(services::name.asc())
+            .load::<Service>(conn)
     }
 }

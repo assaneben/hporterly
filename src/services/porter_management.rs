@@ -107,7 +107,9 @@ impl PorterManagementService {
             })?
             .is_some()
         {
-            return Err(ApiError::BadRequest("Ce nom d'utilisateur existe deja".to_string()));
+            return Err(ApiError::BadRequest(
+                "Ce nom d'utilisateur existe deja".to_string(),
+            ));
         }
 
         let user_id = uuid::Uuid::new_v4().to_string();

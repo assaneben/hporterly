@@ -41,8 +41,11 @@ async fn list_notifications(
         .map_err(|e| ApiError::InternalServerError(format!("Database connection error: {}", e)))?;
 
     let limit = query.limit.unwrap_or(50).max(1).min(200);
-    let notif_type =
-        query.notification_type.as_deref().map(str::trim).filter(|value| !value.is_empty());
+    let notif_type = query
+        .notification_type
+        .as_deref()
+        .map(str::trim)
+        .filter(|value| !value.is_empty());
     let notifications = NotificationService::get_user_notifications_filtered(
         &mut conn, &user.id, limit, notif_type,
     )
@@ -163,7 +166,11 @@ async fn list_message_recipients(
     porters.retain(|entry| entry.user_id != user.id);
     demandeurs.retain(|entry| entry.id != user.id);
 
-    Ok(HttpResponse::Ok().json(MessageRecipientsResponse { admins, porters, demandeurs }))
+    Ok(HttpResponse::Ok().json(MessageRecipientsResponse {
+        admins,
+        porters,
+        demandeurs,
+    }))
 }
 
 /// POST /api/notifications/send-message - Send a user message to admins or a specific porter
@@ -191,11 +198,15 @@ async fn send_message_to_admins(
     }
 
     let channel_raw = body.channel.as_deref().unwrap_or("general").trim();
-    let channel =
-        if channel_raw.is_empty() { "general".to_string() } else { channel_raw.to_string() };
+    let channel = if channel_raw.is_empty() {
+        "general".to_string()
+    } else {
+        channel_raw.to_string()
+    };
 
-    let full_name =
-        format!("{} {}", user.first_name.trim(), user.last_name.trim()).trim().to_string();
+    let full_name = format!("{} {}", user.first_name.trim(), user.last_name.trim())
+        .trim()
+        .to_string();
     let sender_display = if full_name.is_empty() {
         user.username.clone()
     } else {

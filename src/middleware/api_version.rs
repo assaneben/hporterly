@@ -20,7 +20,9 @@ where
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(ApiVersionCompatMiddlewareService { service: Rc::new(service) }))
+        ready(Ok(ApiVersionCompatMiddlewareService {
+            service: Rc::new(service),
+        }))
     }
 }
 
@@ -48,7 +50,11 @@ where
                     req.head_mut().uri = parsed;
                 }
                 Err(error) => {
-                    log::warn!("Failed to rewrite API v1 URI '{}': {}", rewritten_uri, error);
+                    log::warn!(
+                        "Failed to rewrite API v1 URI '{}': {}",
+                        rewritten_uri,
+                        error
+                    );
                 }
             }
         }

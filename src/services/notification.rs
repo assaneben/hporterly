@@ -120,7 +120,11 @@ impl NotificationService {
             notification_type: NotificationType::TicketCreated,
             title: "Nouvelle demande".to_string(),
             message: format!("Nouvelle demande {} creee", priority_label),
-            priority: if priority == 1 { "high".to_string() } else { "normal".to_string() },
+            priority: if priority == 1 {
+                "high".to_string()
+            } else {
+                "normal".to_string()
+            },
             data: serde_json::json!({
                 "ticket_id": ticket_id,
                 "priority": priority
@@ -384,14 +388,18 @@ impl NotificationService {
         limit: i64,
         notif_type: Option<&str>,
     ) -> Result<Vec<DbNotification>, diesel::result::Error> {
-        let mut query =
-            notifications::table.filter(notifications::user_id.eq(user_id)).into_boxed();
+        let mut query = notifications::table
+            .filter(notifications::user_id.eq(user_id))
+            .into_boxed();
 
         if let Some(notification_type) = notif_type {
             query = query.filter(notifications::notification_type.eq(notification_type));
         }
 
-        query.order(notifications::created_at.desc()).limit(limit).load::<DbNotification>(conn)
+        query
+            .order(notifications::created_at.desc())
+            .limit(limit)
+            .load::<DbNotification>(conn)
     }
 
     /// Delete one notification for the current user (hard delete)
@@ -415,21 +423,39 @@ impl NotificationService {
         let rows = users::table
             .filter(users::role.eq_any(["administrateur", "regulateur", "admin"]))
             .filter(users::is_active.eq(true))
-            .order((users::last_name.asc(), users::first_name.asc(), users::username.asc()))
-            .select((users::id, users::username, users::role, users::first_name, users::last_name))
+            .order((
+                users::last_name.asc(),
+                users::first_name.asc(),
+                users::username.asc(),
+            ))
+            .select((
+                users::id,
+                users::username,
+                users::role,
+                users::first_name,
+                users::last_name,
+            ))
             .load::<(String, String, String, String, String)>(conn)?;
 
         Ok(rows
             .into_iter()
             .map(|(id, username, role, first_name, last_name)| {
-                let full_name =
-                    format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
+                let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                    .trim()
+                    .to_string();
                 let display_name = if full_name.is_empty() {
                     username.clone()
                 } else {
                     format!("{} ({})", full_name, username)
                 };
-                MessageAdminRecipient { id, username, role, first_name, last_name, display_name }
+                MessageAdminRecipient {
+                    id,
+                    username,
+                    role,
+                    first_name,
+                    last_name,
+                    display_name,
+                }
             })
             .collect())
     }
@@ -442,7 +468,11 @@ impl NotificationService {
             .inner_join(users::table.on(users::id.eq(porters::user_id)))
             .filter(users::is_active.eq(true))
             .filter(users::role.eq("brancardier"))
-            .order((porters::status.asc(), users::last_name.asc(), users::first_name.asc()))
+            .order((
+                porters::status.asc(),
+                users::last_name.asc(),
+                users::first_name.asc(),
+            ))
             .select((
                 porters::id,
                 users::id,
@@ -455,24 +485,27 @@ impl NotificationService {
 
         Ok(rows
             .into_iter()
-            .map(|(porter_id, user_id, username, first_name, last_name, status)| {
-                let full_name =
-                    format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
-                let display_name = if full_name.is_empty() {
-                    format!("{} ({})", porter_id, username)
-                } else {
-                    format!("{} [{}]", full_name, porter_id)
-                };
-                MessagePorterRecipient {
-                    porter_id,
-                    user_id,
-                    username,
-                    first_name,
-                    last_name,
-                    status,
-                    display_name,
-                }
-            })
+            .map(
+                |(porter_id, user_id, username, first_name, last_name, status)| {
+                    let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                        .trim()
+                        .to_string();
+                    let display_name = if full_name.is_empty() {
+                        format!("{} ({})", porter_id, username)
+                    } else {
+                        format!("{} [{}]", full_name, porter_id)
+                    };
+                    MessagePorterRecipient {
+                        porter_id,
+                        user_id,
+                        username,
+                        first_name,
+                        last_name,
+                        status,
+                        display_name,
+                    }
+                },
+            )
             .collect())
     }
 
@@ -483,21 +516,37 @@ impl NotificationService {
         let rows = users::table
             .filter(users::role.eq("demandeur"))
             .filter(users::is_active.eq(true))
-            .order((users::last_name.asc(), users::first_name.asc(), users::username.asc()))
-            .select((users::id, users::username, users::first_name, users::last_name))
+            .order((
+                users::last_name.asc(),
+                users::first_name.asc(),
+                users::username.asc(),
+            ))
+            .select((
+                users::id,
+                users::username,
+                users::first_name,
+                users::last_name,
+            ))
             .load::<(String, String, String, String)>(conn)?;
 
         Ok(rows
             .into_iter()
             .map(|(id, username, first_name, last_name)| {
-                let full_name =
-                    format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
+                let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                    .trim()
+                    .to_string();
                 let display_name = if full_name.is_empty() {
                     username.clone()
                 } else {
                     format!("{} ({})", full_name, username)
                 };
-                MessageDemandeurRecipient { id, username, first_name, last_name, display_name }
+                MessageDemandeurRecipient {
+                    id,
+                    username,
+                    first_name,
+                    last_name,
+                    display_name,
+                }
             })
             .collect())
     }
@@ -545,8 +594,9 @@ impl NotificationService {
             .optional()
             .map(|row| {
                 row.map(|(username, first_name, last_name)| {
-                    let full_name =
-                        format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
+                    let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                        .trim()
+                        .to_string();
                     if full_name.is_empty() {
                         username
                     } else {
@@ -571,8 +621,9 @@ impl NotificationService {
             .optional()
             .map(|row| {
                 row.map(|(username, first_name, last_name)| {
-                    let full_name =
-                        format!("{} {}", first_name.trim(), last_name.trim()).trim().to_string();
+                    let full_name = format!("{} {}", first_name.trim(), last_name.trim())
+                        .trim()
+                        .to_string();
                     if full_name.is_empty() {
                         format!("{} ({})", porter_id, username)
                     } else {

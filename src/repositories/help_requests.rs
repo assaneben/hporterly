@@ -9,7 +9,9 @@ pub struct HelpRequestRepository;
 
 impl HelpRequestRepository {
     pub fn insert(conn: &mut PgConnection, payload: &NewHelpRequest) -> QueryResult<usize> {
-        diesel::insert_into(help_requests::table).values(payload).execute(conn)
+        diesel::insert_into(help_requests::table)
+            .values(payload)
+            .execute(conn)
     }
 
     pub fn find_by_id(conn: &mut PgConnection, id: &str) -> QueryResult<HelpRequest> {

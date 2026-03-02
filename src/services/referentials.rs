@@ -144,13 +144,15 @@ impl ReferentialCatalogService {
         let zone_id = Self::normalize_identifier(body.zone_id.clone())
             .unwrap_or_else(|| Self::make_stable_id("ZONE", &zone_name, existing.zone_id.as_str()));
         let subzone_id = if let Some(subzone) = subzone_name.clone() {
-            Some(Self::normalize_identifier(body.subzone_id.clone()).unwrap_or_else(|| {
-                Self::make_stable_id(
-                    "SUB",
-                    &subzone,
-                    existing.subzone_id.as_deref().unwrap_or("SUB-DEFAULT"),
-                )
-            }))
+            Some(
+                Self::normalize_identifier(body.subzone_id.clone()).unwrap_or_else(|| {
+                    Self::make_stable_id(
+                        "SUB",
+                        &subzone,
+                        existing.subzone_id.as_deref().unwrap_or("SUB-DEFAULT"),
+                    )
+                }),
+            )
         } else {
             None
         };
@@ -199,7 +201,10 @@ impl ReferentialCatalogService {
                 ))
             })?;
         if deleted == 0 {
-            return Err(ApiError::NotFound(format!("Service {} not found", service_id)));
+            return Err(ApiError::NotFound(format!(
+                "Service {} not found",
+                service_id
+            )));
         }
         Ok(json!({ "success": true, "deleted": true, "id": service_id }))
     }
@@ -231,7 +236,9 @@ impl ReferentialCatalogService {
             id: format!("EQUIP-{}", Uuid::new_v4()),
             label: body.label,
             sizes: Self::map_sizes(body.sizes),
-            required_fields: body.required_fields.unwrap_or_else(Self::default_required_fields),
+            required_fields: body
+                .required_fields
+                .unwrap_or_else(Self::default_required_fields),
         };
         ReferentialRepository::insert_equipment(&mut conn, &payload).map_err(|e| {
             ApiError::InternalServerError(format!("Failed to create equipment: {}", e))
@@ -253,7 +260,9 @@ impl ReferentialCatalogService {
             .sizes
             .map(|sizes| sizes.into_iter().map(Some).collect())
             .or(existing.sizes.clone());
-        let required_fields = body.required_fields.unwrap_or(existing.required_fields.clone());
+        let required_fields = body
+            .required_fields
+            .unwrap_or(existing.required_fields.clone());
         let data = EquipmentUpdateData {
             label: body.label.unwrap_or(existing.label),
             sizes,
@@ -293,7 +302,10 @@ impl ReferentialCatalogService {
                 ))
             })?;
         if deleted == 0 {
-            return Err(ApiError::NotFound(format!("Equipment {} not found", equipment_id)));
+            return Err(ApiError::NotFound(format!(
+                "Equipment {} not found",
+                equipment_id
+            )));
         }
         Ok(json!({ "success": true, "deleted": true, "id": equipment_id }))
     }
@@ -323,8 +335,9 @@ impl ReferentialCatalogService {
     ) -> ApiResult<ReferentialTransportMode> {
         require_admin(user)?;
         let mut conn = Self::conn(pool)?;
-        let max_sort_order =
-            ReferentialRepository::max_transport_mode_sort_order(&mut conn).ok().flatten();
+        let max_sort_order = ReferentialRepository::max_transport_mode_sort_order(&mut conn)
+            .ok()
+            .flatten();
         let sort_order = body.sort_order.unwrap_or(max_sort_order.unwrap_or(0) + 1);
 
         let payload = NewReferentialTransportMode {
@@ -384,7 +397,10 @@ impl ReferentialCatalogService {
                 ))
             })?;
         if deleted == 0 {
-            return Err(ApiError::NotFound(format!("Transport mode {} not found", mode_id)));
+            return Err(ApiError::NotFound(format!(
+                "Transport mode {} not found",
+                mode_id
+            )));
         }
         Ok(json!({ "success": true, "deleted": true, "id": mode_id }))
     }
@@ -409,8 +425,10 @@ impl ReferentialCatalogService {
     ) -> ApiResult<ReferentialSpecimen> {
         require_admin(user)?;
         let mut conn = Self::conn(pool)?;
-        let payload =
-            NewReferentialSpecimen { id: format!("SPEC-{}", Uuid::new_v4()), label: body.label };
+        let payload = NewReferentialSpecimen {
+            id: format!("SPEC-{}", Uuid::new_v4()),
+            label: body.label,
+        };
         ReferentialRepository::insert_specimen(&mut conn, &payload)
             .map_err(|e| ApiError::InternalServerError(format!("Failed to create specimen: {}", e)))
     }
@@ -456,7 +474,10 @@ impl ReferentialCatalogService {
                 ))
             })?;
         if deleted == 0 {
-            return Err(ApiError::NotFound(format!("Specimen {} not found", specimen_id)));
+            return Err(ApiError::NotFound(format!(
+                "Specimen {} not found",
+                specimen_id
+            )));
         }
         Ok(json!({ "success": true, "deleted": true, "id": specimen_id }))
     }
@@ -482,17 +503,24 @@ impl ReferentialCatalogService {
     }
 
     fn normalize_non_empty(value: Option<String>) -> Option<String> {
-        value.map(|v| v.trim().to_string()).filter(|v| !v.is_empty())
+        value
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty())
     }
 
     fn normalize_identifier(value: Option<String>) -> Option<String> {
-        value.map(|v| v.trim().to_uppercase()).filter(|v| !v.is_empty())
+        value
+            .map(|v| v.trim().to_uppercase())
+            .filter(|v| !v.is_empty())
     }
 
     fn ensure_required_hierarchy_label(value: String, field_label: &str) -> ApiResult<String> {
         let trimmed = value.trim().to_string();
         if trimmed.is_empty() {
-            Err(ApiError::ValidationError(format!("Le champ {} est obligatoire", field_label)))
+            Err(ApiError::ValidationError(format!(
+                "Le champ {} est obligatoire",
+                field_label
+            )))
         } else {
             Ok(trimmed)
         }
@@ -508,8 +536,11 @@ impl ReferentialCatalogService {
             }
         }
 
-        let compact =
-            normalized.split('-').filter(|part| !part.is_empty()).collect::<Vec<_>>().join("-");
+        let compact = normalized
+            .split('-')
+            .filter(|part| !part.is_empty())
+            .collect::<Vec<_>>()
+            .join("-");
 
         if compact.is_empty() {
             fallback.to_string()

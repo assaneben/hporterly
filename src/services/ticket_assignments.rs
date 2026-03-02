@@ -86,7 +86,9 @@ impl TicketAssignmentService {
         })?;
 
         if existing.is_some() {
-            return Err(ApiError::BadRequest("Porter already assigned to this ticket".to_string()));
+            return Err(ApiError::BadRequest(
+                "Porter already assigned to this ticket".to_string(),
+            ));
         }
 
         let new_assignment = NewTicketAssignment {

@@ -76,7 +76,10 @@ pub struct UpdatePorterSkills {
 
 impl Porter {
     pub fn has_skill(&self, skill: &str) -> bool {
-        self.skills.iter().filter_map(|s| s.as_ref()).any(|s| s == skill)
+        self.skills
+            .iter()
+            .filter_map(|s| s.as_ref())
+            .any(|s| s == skill)
     }
 
     pub fn is_available(&self) -> bool {

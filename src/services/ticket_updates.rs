@@ -100,7 +100,11 @@ impl TicketUpdateService {
             completed = true;
         }
 
-        Ok(EquipmentStatusResult { delivered, label_returned, completed })
+        Ok(EquipmentStatusResult {
+            delivered,
+            label_returned,
+            completed,
+        })
     }
 
     pub fn update_notes(
@@ -170,7 +174,9 @@ impl TicketUpdateService {
             .map_err(|_| ApiError::NotFound(format!("Ticket {} not found", ticket_id)))?;
 
         let requester_match = ticket.requester_id == user.id
-            || ticket.requester_id.eq_ignore_ascii_case(user.username.as_str());
+            || ticket
+                .requester_id
+                .eq_ignore_ascii_case(user.username.as_str());
         let actor_is_regulation = is_regulation_role(user.role.as_str());
 
         if user.role == "brancardier" {
@@ -213,15 +219,26 @@ impl TicketUpdateService {
             ));
         }
 
-        let actor_label = format!("{} {}", user.first_name, user.last_name).trim().to_string();
-        let actor = if actor_label.is_empty() { user.username.clone() } else { actor_label };
+        let actor_label = format!("{} {}", user.first_name, user.last_name)
+            .trim()
+            .to_string();
+        let actor = if actor_label.is_empty() {
+            user.username.clone()
+        } else {
+            actor_label
+        };
 
         let now = Utc::now().naive_utc();
         let workflow_line = format!(
             "[PRIORITY_OVERRIDE] {} | {} | N{} -> N{} | {}",
             now, actor, ticket.priority, priority, reason
         );
-        let merged_notes = match ticket.notes.as_ref().map(|v| v.trim()).filter(|v| !v.is_empty()) {
+        let merged_notes = match ticket
+            .notes
+            .as_ref()
+            .map(|v| v.trim())
+            .filter(|v| !v.is_empty())
+        {
             Some(existing) => format!("{}\n{}", existing, workflow_line),
             None => workflow_line,
         };

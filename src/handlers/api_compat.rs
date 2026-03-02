@@ -26,7 +26,9 @@ fn build_legacy_location(req: &HttpRequest, tail: Option<&str>) -> String {
 )]
 async fn compat_redirect_root(req: HttpRequest) -> HttpResponse {
     let location = build_legacy_location(&req, None);
-    HttpResponse::TemporaryRedirect().append_header((header::LOCATION, location)).finish()
+    HttpResponse::TemporaryRedirect()
+        .append_header((header::LOCATION, location))
+        .finish()
 }
 
 #[route(
@@ -41,7 +43,9 @@ async fn compat_redirect_root(req: HttpRequest) -> HttpResponse {
 )]
 async fn compat_redirect(req: HttpRequest, tail: web::Path<String>) -> HttpResponse {
     let location = build_legacy_location(&req, Some(&tail.into_inner()));
-    HttpResponse::TemporaryRedirect().append_header((header::LOCATION, location)).finish()
+    HttpResponse::TemporaryRedirect()
+        .append_header((header::LOCATION, location))
+        .finish()
 }
 
 pub fn configure(cfg: &mut web::ServiceConfig) {

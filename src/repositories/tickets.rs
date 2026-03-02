@@ -34,7 +34,9 @@ impl TicketRepository {
     }
 
     pub fn insert(conn: &mut PgConnection, payload: &NewTicket) -> QueryResult<Ticket> {
-        diesel::insert_into(tickets::table).values(payload).get_result::<Ticket>(conn)
+        diesel::insert_into(tickets::table)
+            .values(payload)
+            .get_result::<Ticket>(conn)
     }
 
     pub fn activate_programmed_tickets_visibility(conn: &mut PgConnection) -> QueryResult<usize> {
@@ -93,7 +95,9 @@ impl TicketRepository {
         conn: &mut PgConnection,
         requester_id: &str,
     ) -> QueryResult<Vec<Ticket>> {
-        tickets::table.filter(tickets::requester_id.eq(requester_id)).load::<Ticket>(conn)
+        tickets::table
+            .filter(tickets::requester_id.eq(requester_id))
+            .load::<Ticket>(conn)
     }
 
     pub fn anonymize_requester(
@@ -183,7 +187,10 @@ impl TicketRepository {
         status: &str,
     ) -> QueryResult<Ticket> {
         diesel::update(tickets::table.find(ticket_id))
-            .set((tickets::porter_id.eq::<Option<String>>(None), tickets::status.eq(status)))
+            .set((
+                tickets::porter_id.eq::<Option<String>>(None),
+                tickets::status.eq(status),
+            ))
             .get_result::<Ticket>(conn)
     }
 
@@ -264,7 +271,10 @@ impl TicketRepository {
         ticket_assignments::table
             .filter(ticket_assignments::ticket_id.eq_any(ticket_ids))
             .filter(ticket_assignments::is_active.eq(true))
-            .order((ticket_assignments::ticket_id.asc(), ticket_assignments::assigned_at.asc()))
+            .order((
+                ticket_assignments::ticket_id.asc(),
+                ticket_assignments::assigned_at.asc(),
+            ))
             .select((
                 ticket_assignments::ticket_id,
                 ticket_assignments::porter_id,
@@ -283,7 +293,12 @@ impl TicketRepository {
 
         users::table
             .filter(users::id.eq_any(requester_ids))
-            .select((users::id, users::username, users::first_name, users::last_name))
+            .select((
+                users::id,
+                users::username,
+                users::first_name,
+                users::last_name,
+            ))
             .load::<(String, String, String, String)>(conn)
     }
 }

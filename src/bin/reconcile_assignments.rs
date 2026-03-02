@@ -86,8 +86,9 @@ fn ensure_supervisor_assignment(
             is_active: true,
         };
 
-        let changed =
-            diesel::insert_into(ticket_assignments::table).values(&new_assignment).execute(conn)?;
+        let changed = diesel::insert_into(ticket_assignments::table)
+            .values(&new_assignment)
+            .execute(conn)?;
 
         if changed > 0 {
             stats.assignments_created += changed;
@@ -116,7 +117,10 @@ fn update_ticket_owner(
 ) -> Result<usize, diesel::result::Error> {
     match (porter_id, status) {
         (Some(pid), Some(st)) => diesel::update(tickets::table.find(ticket_id))
-            .set((tickets::porter_id.eq(Some(pid.to_string())), tickets::status.eq(st.to_string())))
+            .set((
+                tickets::porter_id.eq(Some(pid.to_string())),
+                tickets::status.eq(st.to_string()),
+            ))
             .execute(conn),
         (Some(pid), None) => diesel::update(tickets::table.find(ticket_id))
             .set(tickets::porter_id.eq(Some(pid.to_string())))
@@ -174,8 +178,10 @@ async fn main() {
 
             let mut desired_supervisor = ticket.porter_id.clone();
             if desired_supervisor.is_none() {
-                desired_supervisor =
-                    supervisor_ids.first().cloned().or_else(|| co_partner_ids.first().cloned());
+                desired_supervisor = supervisor_ids
+                    .first()
+                    .cloned()
+                    .or_else(|| co_partner_ids.first().cloned());
             }
 
             if let Some(supervisor_pid) = desired_supervisor {
@@ -323,17 +329,38 @@ async fn main() {
     match result {
         Ok(stats) => {
             println!("[reconcile] Termine avec succes");
-            println!("  - Assignations desactivees            : {}", stats.assignments_disabled);
-            println!("  - Assignations supervisor creees      : {}", stats.assignments_created);
-            println!("  - Assignations promues co->supervisor : {}", stats.assignments_promoted);
-            println!("  - Tickets reliees au bon owner        : {}", stats.tickets_relinked);
-            println!("  - Tickets renvoyes en attente         : {}", stats.tickets_unassigned);
+            println!(
+                "  - Assignations desactivees            : {}",
+                stats.assignments_disabled
+            );
+            println!(
+                "  - Assignations supervisor creees      : {}",
+                stats.assignments_created
+            );
+            println!(
+                "  - Assignations promues co->supervisor : {}",
+                stats.assignments_promoted
+            );
+            println!(
+                "  - Tickets reliees au bon owner        : {}",
+                stats.tickets_relinked
+            );
+            println!(
+                "  - Tickets renvoyes en attente         : {}",
+                stats.tickets_unassigned
+            );
             println!(
                 "  - Tickets transferes a co-partner     : {}",
                 stats.tickets_reassigned_to_copartner
             );
-            println!("  - Porters passes busy                 : {}", stats.porter_status_busy);
-            println!("  - Porters passes available            : {}", stats.porter_status_available);
+            println!(
+                "  - Porters passes busy                 : {}",
+                stats.porter_status_busy
+            );
+            println!(
+                "  - Porters passes available            : {}",
+                stats.porter_status_available
+            );
             println!(
                 "  - Porters multi-supervisor corriges   : {}",
                 stats.multi_supervisor_porters_fixed

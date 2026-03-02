@@ -52,7 +52,10 @@ impl ResponseError for ApiError {
             _ => self.to_string(),
         };
 
-        HttpResponse::build(status).json(ErrorResponse { error: error_type.to_string(), message })
+        HttpResponse::build(status).json(ErrorResponse {
+            error: error_type.to_string(),
+            message,
+        })
     }
 }
 

@@ -21,7 +21,9 @@ mod tests {
 
         // 2. Vérification (Succès)
         let parsed_hash = PasswordHash::new(&password_hash).expect("Failed to parse hash");
-        assert!(Argon2::default().verify_password(password.as_bytes(), &parsed_hash).is_ok());
+        assert!(Argon2::default()
+            .verify_password(password.as_bytes(), &parsed_hash)
+            .is_ok());
 
         // 3. Vérification (Échec)
         assert!(Argon2::default()

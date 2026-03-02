@@ -22,7 +22,10 @@ pub fn require_role(user: &User, allowed_roles: &[&str]) -> Result<(), ApiError>
 
 /// Helper to require administrator role only
 pub fn require_admin(user: &User) -> Result<(), ApiError> {
-    require_role(user, &["administrateur", "regulateur", "admin", "super_regul"])
+    require_role(
+        user,
+        &["administrateur", "regulateur", "admin", "super_regul"],
+    )
 }
 
 /// Helper to require porter (brancardier) role

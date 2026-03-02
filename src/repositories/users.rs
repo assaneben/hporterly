@@ -33,18 +33,25 @@ impl UserRepository {
     }
 
     pub fn find_by_username(conn: &mut PgConnection, username: &str) -> QueryResult<User> {
-        users::table.filter(users::username.eq(username)).first::<User>(conn)
+        users::table
+            .filter(users::username.eq(username))
+            .first::<User>(conn)
     }
 
     pub fn find_by_username_optional(
         conn: &mut PgConnection,
         username: &str,
     ) -> QueryResult<Option<User>> {
-        users::table.filter(users::username.eq(username)).first::<User>(conn).optional()
+        users::table
+            .filter(users::username.eq(username))
+            .first::<User>(conn)
+            .optional()
     }
 
     pub fn insert(conn: &mut PgConnection, new_user: &NewUser) -> QueryResult<User> {
-        diesel::insert_into(users::table).values(new_user).get_result::<User>(conn)
+        diesel::insert_into(users::table)
+            .values(new_user)
+            .get_result::<User>(conn)
     }
 
     pub fn update(

@@ -10,7 +10,9 @@ impl ValidatorService {
         let transport_type = request.transport_type.trim().to_uppercase();
         let transport_subtype = request.transport_subtype.trim().to_uppercase();
         if !["PATIENT", "EQUIPMENT", "SPECIMEN"].contains(&transport_type.as_str()) {
-            return Err(ApiError::ValidationError("Type de transport invalide".to_string()));
+            return Err(ApiError::ValidationError(
+                "Type de transport invalide".to_string(),
+            ));
         }
 
         // Origin and destination must be different.
@@ -44,7 +46,9 @@ impl ValidatorService {
             let mode = request.mode.as_deref().unwrap_or("").trim();
             let valid_modes = ["Lit", "Fauteuil", "Brancard", "Marche"];
             if !valid_modes.contains(&mode) {
-                return Err(ApiError::ValidationError("Mode de transport invalide".to_string()));
+                return Err(ApiError::ValidationError(
+                    "Mode de transport invalide".to_string(),
+                ));
             }
 
             let has_identity = !request.patient_id.trim().is_empty()

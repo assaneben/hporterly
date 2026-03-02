@@ -64,7 +64,9 @@ impl TicketAssignmentWorkflowService {
                 TicketAssignmentService::resolve_supervisor_id(conn, &ticket, ticket_id)?;
 
             if supervisor_id.as_deref() != Some(&porter_id) {
-                return Err(ApiError::Forbidden("Only supervisor can add co-partners".to_string()));
+                return Err(ApiError::Forbidden(
+                    "Only supervisor can add co-partners".to_string(),
+                ));
             }
         } else {
             require_admin(user)?;
@@ -215,7 +217,11 @@ impl TicketAssignmentWorkflowService {
             log::warn!("Non-blocking operation failed: {}", err);
         }
 
-        Ok(TicketAssignResult { ticket_before: ticket, ticket_after: updated_ticket, porter_id })
+        Ok(TicketAssignResult {
+            ticket_before: ticket,
+            ticket_after: updated_ticket,
+            porter_id,
+        })
     }
 
     pub fn reassign(

@@ -38,14 +38,15 @@ impl AuditService {
             user_agent,
         };
 
-        diesel::insert_into(audit_logs::table).values(&new_audit).execute(&mut conn).map_err(
-            |e| {
+        diesel::insert_into(audit_logs::table)
+            .values(&new_audit)
+            .execute(&mut conn)
+            .map_err(|e| {
                 crate::utils::ApiError::InternalServerError(format!(
                     "Failed to create audit log: {}",
                     e
                 ))
-            },
-        )?;
+            })?;
 
         log::info!(
             "Audit log created: user={}, action={}, entity={}/{}",

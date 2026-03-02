@@ -45,7 +45,12 @@ impl TicketAssignmentActionService {
             log::warn!("Non-blocking operation failed: {}", err);
         }
 
-        log::info!("Ticket {} assigned to porter {} by user {}", ticket_id, porter_id, user.id);
+        log::info!(
+            "Ticket {} assigned to porter {} by user {}",
+            ticket_id,
+            porter_id,
+            user.id
+        );
 
         let porter_name = format!("{} {}", user.first_name, user.last_name);
         let notif = NotificationService::ticket_assigned(ticket_id, &porter_name);
@@ -186,7 +191,10 @@ impl TicketAssignmentActionService {
             &mut conn,
             &["administrateur", "regulateur"],
         ) {
-            for uid in reg_admin_ids.iter().filter(|uid| uid.as_str() != user.id.as_str()) {
+            for uid in reg_admin_ids
+                .iter()
+                .filter(|uid| uid.as_str() != user.id.as_str())
+            {
                 if let Err(err) =
                     NotificationService::persist_if_enabled(&mut conn, uid, &notif, Some(ticket_id))
                 {
@@ -433,7 +441,12 @@ impl TicketAssignmentActionService {
             log::warn!("Non-blocking operation failed: {}", err);
         }
 
-        log::info!("Ticket {} permanently deleted by user {} ({})", ticket_id, user.id, user.role);
+        log::info!(
+            "Ticket {} permanently deleted by user {} ({})",
+            ticket_id,
+            user.id,
+            user.role
+        );
 
         Ok(json!({
             "id": deleted_ticket_id,

@@ -23,6 +23,9 @@ impl PatientQueryService {
             PatientRepository::search(&mut conn, &search_term, query.limit).map_err(|e| {
                 ApiError::InternalServerError(format!("Failed to search patients: {}", e))
             })?;
-        Ok(patients.into_iter().map(PatientSearchResult::from).collect())
+        Ok(patients
+            .into_iter()
+            .map(PatientSearchResult::from)
+            .collect())
     }
 }

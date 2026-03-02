@@ -31,7 +31,10 @@ pub(super) async fn update_equipment_status(
     )?;
 
     if result.completed {
-        log::info!("Ticket {} auto-completed (DonJoy Abdostrap workflow)", ticket_id);
+        log::info!(
+            "Ticket {} auto-completed (DonJoy Abdostrap workflow)",
+            ticket_id
+        );
     }
 
     Ok(HttpResponse::Ok().json(json!({
