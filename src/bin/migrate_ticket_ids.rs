@@ -9,6 +9,7 @@ use diesel::sql_types::{Integer, Nullable, Text, Timestamp};
 struct OldTicketRow {
     #[diesel(sql_type = Text)]
     id: String,
+    #[allow(dead_code)]
     #[diesel(sql_type = Timestamp)]
     created_at: chrono::NaiveDateTime,
 }
@@ -33,9 +34,7 @@ fn main() {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool");
+    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
 
     let mut conn = pool.get().expect("Failed to get connection");
 
@@ -98,3 +97,14 @@ fn main() {
         println!("  {} - {}", row.id, row.patient_name);
     }
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-13: this maintenance utility fails explicitly on migration errors.
+  - SBD-22: ticket ID migration steps remain deterministic and reviewable.
+- Not fully satisfiable in this file:
+  - SBD-01/SBD-21 runtime API controls are not applicable to this offline maintenance binary.
+    Alternative: run only under operator control with database backup and change approval.
+*/

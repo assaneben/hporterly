@@ -13,18 +13,17 @@ async fn main() {
     dotenvy::dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let demo_password = std::env::var("SEED_DEMO_USERS_PASSWORD")
+        .expect("SEED_DEMO_USERS_PASSWORD must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool");
+    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
     let mut conn = pool.get().expect("Failed to get connection");
 
-    let password = "password123";
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
     let password_hash = argon2
-        .hash_password(password.as_bytes(), &salt)
-        .unwrap()
+        .hash_password(demo_password.as_bytes(), &salt)
+        .expect("Failed to hash SEED_DEMO_USERS_PASSWORD")
         .to_string();
 
     // Profils de démonstration
@@ -36,7 +35,7 @@ async fn main() {
             role: "demandeur".to_string(),
             first_name: "Marie".to_string(),
             last_name: "Durand".to_string(),
-            email: Some("marie.durand@hopital.fr".to_string()),
+            email: Some("marie.durand@example.invalid".to_string()),
             service: Some("Cardiologie".to_string()),
             is_active: true,
         },
@@ -47,7 +46,7 @@ async fn main() {
             role: "brancardier".to_string(),
             first_name: "Jean".to_string(),
             last_name: "Martin".to_string(),
-            email: Some("jean.martin@hopital.fr".to_string()),
+            email: Some("jean.martin@example.invalid".to_string()),
             service: Some("Brancardage".to_string()),
             is_active: true,
         },
@@ -58,7 +57,7 @@ async fn main() {
             role: "administrateur".to_string(),
             first_name: "Thomas".to_string(),
             last_name: "Dubois".to_string(),
-            email: Some("thomas.dubois@hopital.fr".to_string()),
+            email: Some("thomas.dubois@example.invalid".to_string()),
             service: Some("Régulation".to_string()),
             is_active: true,
         },
@@ -69,7 +68,7 @@ async fn main() {
             role: "administrateur".to_string(),
             first_name: "Admin".to_string(),
             last_name: "System".to_string(),
-            email: Some("admin@hporterly.fr".to_string()),
+            email: Some("admin@example.invalid".to_string()),
             service: None,
             is_active: true,
         },
@@ -111,13 +110,22 @@ async fn main() {
         .values(&porter_jean)
         .on_conflict(porters::user_id) // Si déjà brancardier, on met à jour le statut/skills
         .do_update()
-        .set((
-            porters::status.eq("available"),
-            porters::skills.eq(porter_jean.skills.clone()),
-        ))
+        .set((porters::status.eq("available"), porters::skills.eq(porter_jean.skills.clone())))
         .execute(&mut conn)
         .expect("Error seeding porter Jean Martin");
 
     println!("✓ Porter 'Jean Martin' seeded as 'available' with [O2, URG]");
-    println!("Password for all users: password123");
+    println!("Demo users created/updated. Password sourced from SEED_DEMO_USERS_PASSWORD.");
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-07: demo password and email domain are no longer hardcoded as deployable secrets or live addresses.
+  - SBD-09: seeded identities remain synthetic and clearly non-production.
+  - SBD-22: demo bootstrap flow stays deterministic and auditable.
+- Not fully satisfiable in this file:
+  - SBD-11 is not applicable to this offline seeding utility.
+    Alternative: restrict use to non-production or controlled bootstrap contexts with reviewed environment variables.
+*/

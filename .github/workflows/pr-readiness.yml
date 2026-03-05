@@ -1,0 +1,102 @@
+name: PR Readiness
+
+on:
+    pull_request:
+        branches: [main, feat/**]
+
+jobs:
+    sanity-check:
+        name: Sanity Check (No Sensitive Strings)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.x"
+
+            - name: Run sanity check
+              run: python3 scripts/sanity_check_no_sensitive_strings.py
+
+    secrets-scan:
+        name: Secret & 19-Digit Pattern Scan
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Scan for hardcoded secrets in changed files
+              run: |
+                  BASE_SHA=${{ github.event.pull_request.base.sha }}
+                  HEAD_SHA=${{ github.event.pull_request.head.sha }}
+                  CHANGED=$(git diff --name-only "$BASE_SHA"..."$HEAD_SHA" | grep -E '\.(rs|toml|md|yml|yaml|json|sql|env.example)$' || true)
+                  if [ -z "$CHANGED" ]; then
+                    echo "No relevant changed files to scan"
+                    exit 0
+                  fi
+                  echo "Changed files: $CHANGED"
+                  # Check for hardcoded secrets pattern (exclude env-var references)
+                  HITS=$(echo "$CHANGED" | xargs grep -nE '(secret|password|api_key|jwt_secret)\s*[:=]\s*["'"'"'][^"'"'"']+["'"'"']' 2>/dev/null | \
+                    grep -vE '(CHANGEME|EXAMPLE|<.+>|env::var|std::env|process.env)' || true)
+                  if [ -n "$HITS" ]; then
+                    echo "::error::Potential hardcoded secret found:"
+                    echo "$HITS"
+                    exit 1
+                  fi
+                  # Check for 19-digit sequences (potential INS)
+                  INS_HITS=$(echo "$CHANGED" | xargs grep -nE '(?<!\d)\d{19}(?!\d)' 2>/dev/null || true)
+                  if [ -n "$INS_HITS" ]; then
+                    echo "::error::19-digit sequence found (potential INS number):"
+                    echo "$INS_HITS"
+                    exit 1
+                  fi
+                  echo "No secrets or 19-digit sequences detected"
+
+    internal-routes-check:
+        name: No Internal Routes in Public Docs
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Check public docs for /internal/* routes
+              run: |
+                  HITS=$(grep -rnE '/internal/[A-Za-z0-9/_-]+' README.md docs/ 2>/dev/null || true)
+                  if [ -n "$HITS" ]; then
+                    echo "::error::Internal route exposed in public documentation:"
+                    echo "$HITS"
+                    exit 1
+                  fi
+                  echo "No internal routes found in public docs"
+
+    backend-quality:
+        name: Backend Quality (cargo check / clippy / test)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: "1.93.0"
+                  components: rustfmt, clippy
+
+            - name: Install libpq headers
+              run: sudo apt-get update && sudo apt-get install -y libpq-dev pkg-config
+
+            - name: Format check
+              run: cargo fmt --all -- --check
+
+            - name: cargo check
+              run: cargo check --all-targets --all-features
+
+            - name: cargo test
+              run: cargo test --all-targets --all-features
+
+            - name: cargo clippy
+              run: cargo clippy --all-targets --all-features -- -D warnings
