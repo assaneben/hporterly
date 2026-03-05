@@ -13,10 +13,12 @@ async fn main() {
     dotenvy::dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let demo_password = std::env::var("SEED_DEMO_USERS_PASSWORD")
-        .expect("SEED_DEMO_USERS_PASSWORD must be set");
+    let demo_password =
+        std::env::var("SEED_DEMO_USERS_PASSWORD").expect("SEED_DEMO_USERS_PASSWORD must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool");
     let mut conn = pool.get().expect("Failed to get connection");
 
     let salt = SaltString::generate(&mut OsRng);
@@ -110,7 +112,10 @@ async fn main() {
         .values(&porter_jean)
         .on_conflict(porters::user_id) // Si déjà brancardier, on met à jour le statut/skills
         .do_update()
-        .set((porters::status.eq("available"), porters::skills.eq(porter_jean.skills.clone())))
+        .set((
+            porters::status.eq("available"),
+            porters::skills.eq(porter_jean.skills.clone()),
+        ))
         .execute(&mut conn)
         .expect("Error seeding porter Jean Martin");
 

@@ -15,10 +15,12 @@ async fn main() {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let admin_password =
         std::env::var("ADMIN_INITIAL_PASSWORD").expect("ADMIN_INITIAL_PASSWORD must be set");
-    let admin_email =
-        std::env::var("ADMIN_INITIAL_EMAIL").unwrap_or_else(|_| "admin@example.invalid".to_string());
+    let admin_email = std::env::var("ADMIN_INITIAL_EMAIL")
+        .unwrap_or_else(|_| "admin@example.invalid".to_string());
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool");
     let mut conn = pool.get().expect("Failed to get connection");
 
     let salt = SaltString::generate(&mut OsRng);
@@ -48,9 +50,7 @@ async fn main() {
         .execute(&mut conn)
         .expect("Error creating admin user");
 
-    println!(
-        "Admin user 'admin' created/updated. Password sourced from ADMIN_INITIAL_PASSWORD."
-    );
+    println!("Admin user 'admin' created/updated. Password sourced from ADMIN_INITIAL_PASSWORD.");
 }
 
 /*
