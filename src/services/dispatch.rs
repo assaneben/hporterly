@@ -1,4 +1,4 @@
-use crate::models::{Porter, Ticket};
+﻿use crate::models::{Porter, Ticket};
 
 /// Assignment scoring logic.
 pub struct DispatchService;
@@ -29,10 +29,10 @@ impl DispatchService {
             return 0;
         }
 
-        if ticket.patient_weight.unwrap_or(0) >= 120 || ticket.patient_bariatric {
-            if !Self::has_any_skill(porter, &["CERT-BARIA", "BARIA"]) {
-                return 0;
-            }
+        if (ticket.patient_weight.unwrap_or(0) >= 120 || ticket.patient_bariatric)
+            && !Self::has_any_skill(porter, &["CERT-BARIA", "BARIA"])
+        {
+            return 0;
         }
 
         // IMM load balancing.
@@ -67,9 +67,7 @@ impl DispatchService {
 
     /// Return best porter recommendation.
     pub fn get_best_porter(ticket: &Ticket, porters: Vec<Porter>) -> Option<(Porter, i32)> {
-        Self::get_recommendations(ticket, porters)
-            .into_iter()
-            .next()
+        Self::get_recommendations(ticket, porters).into_iter().next()
     }
 }
 

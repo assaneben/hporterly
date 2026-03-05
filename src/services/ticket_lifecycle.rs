@@ -98,12 +98,13 @@ impl TicketLifecycleService {
             )));
         }
 
-        if normalized_status == STATUS_COMPLETED && Self::is_donjoy_ticket(&ticket) {
-            if !ticket.equipment_label_returned.unwrap_or(false) {
-                return Err(ApiError::BadRequest(
-                    "Etiquette patient non retournee - cloture DonJoy bloquee".to_string(),
-                ));
-            }
+        if normalized_status == STATUS_COMPLETED
+            && Self::is_donjoy_ticket(&ticket)
+            && !ticket.equipment_label_returned.unwrap_or(false)
+        {
+            return Err(ApiError::BadRequest(
+                "Etiquette patient non retournee - cloture DonJoy bloquee".to_string(),
+            ));
         }
 
         if normalized_status == STATUS_CANCELED {
@@ -136,11 +137,8 @@ impl TicketLifecycleService {
                     request.comment.as_deref().unwrap_or("").trim()
                 ),
             )?;
-        } else if let Some(comment) = request
-            .comment
-            .as_deref()
-            .map(str::trim)
-            .filter(|v| !v.is_empty())
+        } else if let Some(comment) =
+            request.comment.as_deref().map(str::trim).filter(|v| !v.is_empty())
         {
             Self::append_workflow_note(
                 conn,
@@ -215,10 +213,7 @@ impl TicketLifecycleService {
             }
         }
 
-        Ok(TicketStatusTransitionResult {
-            ticket_before: ticket,
-            ticket_after: updated_ticket,
-        })
+        Ok(TicketStatusTransitionResult { ticket_before: ticket, ticket_after: updated_ticket })
     }
 
     pub fn pause(
@@ -367,20 +362,13 @@ impl TicketLifecycleService {
             return Ok(());
         }
 
-        let merged = match ticket
-            .notes
-            .as_deref()
-            .map(str::trim)
-            .filter(|v| !v.is_empty())
-        {
+        let merged = match ticket.notes.as_deref().map(str::trim).filter(|v| !v.is_empty()) {
             Some(existing) => format!("{}\n{}", existing, cleaned_line),
             None => cleaned_line.to_string(),
         };
 
-        TicketRepository::update_notes(conn, ticket.id.as_str(), Some(merged))
-            .map(|_| ())
-            .map_err(|e| {
-                ApiError::InternalServerError(format!("Failed to store workflow note: {}", e))
-            })
+        TicketRepository::update_notes(conn, ticket.id.as_str(), Some(merged)).map(|_| ()).map_err(
+            |e| ApiError::InternalServerError(format!("Failed to store workflow note: {}", e)),
+        )
     }
 }

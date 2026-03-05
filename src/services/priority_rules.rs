@@ -315,9 +315,7 @@ impl PriorityRulesService {
             updated_by: None,
         };
 
-        let _ = diesel::insert_into(priority_rules_config::table)
-            .values(&insert)
-            .execute(conn);
+        let _ = diesel::insert_into(priority_rules_config::table).values(&insert).execute(conn);
 
         priority_rules_config::table
             .find(PRIORITY_RULES_CONFIG_ID)
@@ -387,11 +385,7 @@ impl PriorityRulesService {
                 continue;
             }
 
-            let rules = config
-                .get("rules")
-                .and_then(|v| v.as_array())
-                .cloned()
-                .unwrap_or_default();
+            let rules = config.get("rules").and_then(|v| v.as_array()).cloned().unwrap_or_default();
 
             for rule in rules {
                 let rule_level = rule.get("level").and_then(|v| v.as_i64()).unwrap_or(0) as i32;
@@ -399,10 +393,7 @@ impl PriorityRulesService {
                     continue;
                 }
 
-                let enabled = rule
-                    .get("enabled")
-                    .and_then(|v| v.as_bool())
-                    .unwrap_or(true);
+                let enabled = rule.get("enabled").and_then(|v| v.as_bool()).unwrap_or(true);
                 if !enabled {
                     continue;
                 }
@@ -414,16 +405,9 @@ impl PriorityRulesService {
                         .unwrap_or("Priorite calculee automatiquement");
 
                     let reason = Self::render_reason(reason_template, context);
-                    let rule_id = rule
-                        .get("id")
-                        .and_then(|v| v.as_str())
-                        .map(|v| v.to_string());
+                    let rule_id = rule.get("id").and_then(|v| v.as_str()).map(|v| v.to_string());
 
-                    return PriorityEvaluationResult {
-                        priority: level,
-                        reason,
-                        rule_id,
-                    };
+                    return PriorityEvaluationResult { priority: level, reason, rule_id };
                 }
             }
         }
@@ -460,25 +444,18 @@ impl PriorityRulesService {
     }
 
     fn rule_matches(rule: &serde_json::Value, context: &serde_json::Value) -> bool {
-        let conditions = rule
-            .get("conditions")
-            .and_then(|v| v.as_array())
-            .cloned()
-            .unwrap_or_default();
+        let conditions =
+            rule.get("conditions").and_then(|v| v.as_array()).cloned().unwrap_or_default();
 
         if conditions.is_empty() {
             return true;
         }
 
-        let combinator = rule
-            .get("combinator")
-            .and_then(|v| v.as_str())
-            .unwrap_or("AND")
-            .to_uppercase();
+        let combinator =
+            rule.get("combinator").and_then(|v| v.as_str()).unwrap_or("AND").to_uppercase();
 
-        let mut results = conditions
-            .iter()
-            .map(|condition| Self::condition_matches(condition, context));
+        let mut results =
+            conditions.iter().map(|condition| Self::condition_matches(condition, context));
 
         if combinator == "OR" {
             results.any(|matched| matched)
@@ -488,10 +465,7 @@ impl PriorityRulesService {
     }
 
     fn condition_matches(condition: &serde_json::Value, context: &serde_json::Value) -> bool {
-        let field = condition
-            .get("field")
-            .and_then(|v| v.as_str())
-            .unwrap_or("");
+        let field = condition.get("field").and_then(|v| v.as_str()).unwrap_or("");
         if field.is_empty() {
             return false;
         }
@@ -502,10 +476,7 @@ impl PriorityRulesService {
             .unwrap_or("is_checked")
             .to_lowercase();
 
-        let field_value = context
-            .get(field)
-            .cloned()
-            .unwrap_or(serde_json::Value::Null);
+        let field_value = context.get(field).cloned().unwrap_or(serde_json::Value::Null);
 
         match operator.as_str() {
             "is_checked" => Self::value_to_bool(&field_value),
@@ -585,15 +556,10 @@ impl PriorityRulesService {
     }
 
     fn render_reason(template: &str, context: &serde_json::Value) -> String {
-        let destination = context
-            .get("destination")
-            .and_then(|v| v.as_str())
-            .unwrap_or("destination");
+        let destination =
+            context.get("destination").and_then(|v| v.as_str()).unwrap_or("destination");
 
-        template
-            .replace("{destination}", destination)
-            .trim()
-            .to_string()
+        template.replace("{destination}", destination).trim().to_string()
     }
 
     fn value_to_bool(value: &serde_json::Value) -> bool {
@@ -682,19 +648,11 @@ fn normalize_text(input: &str) -> String {
     input
         .trim()
         .to_lowercase()
-        .replace('é', "e")
-        .replace('è', "e")
-        .replace('ê', "e")
-        .replace('ë', "e")
-        .replace('à', "a")
-        .replace('â', "a")
-        .replace('î', "i")
-        .replace('ï', "i")
-        .replace('ô', "o")
-        .replace('ö', "o")
-        .replace('ù', "u")
-        .replace('û', "u")
-        .replace('ü', "u")
+        .replace(['é', 'è', 'ê', 'ë'], "e")
+        .replace(['à', 'â'], "a")
+        .replace(['î', 'ï'], "i")
+        .replace(['ô', 'ö'], "o")
+        .replace(['ù', 'û', 'ü'], "u")
         .replace('ç', "c")
 }
 

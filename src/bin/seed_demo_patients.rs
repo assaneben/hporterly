@@ -15,7 +15,7 @@ fn compute_age(dob: NaiveDate) -> i32 {
     if today.ordinal() < dob.ordinal() {
         age -= 1;
     }
-    age as i32
+    age
 }
 
 fn normalize_gender(sex: &str) -> String {
@@ -26,6 +26,7 @@ fn normalize_gender(sex: &str) -> String {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn make_patient(
     id: &str,
     first_name: &str,
@@ -155,9 +156,7 @@ async fn main() {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool = r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool");
+    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool");
     let mut conn = pool.get().expect("Failed to get connection");
 
     let demo_patients = demo_patients();
@@ -186,16 +185,10 @@ async fn main() {
             .execute(&mut conn)
             .unwrap_or_else(|_| panic!("Error creating/updating patient: {}", patient_id));
 
-        println!(
-            "✓ Patient '{}' (IPP: {}) upserted",
-            patient_name, patient_id
-        );
+        println!("✓ Patient '{}' (IPP: {}) upserted", patient_name, patient_id);
         upserted += 1;
     }
 
     println!();
-    println!(
-        "✅ {} patients fictifs prêts pour l'auto-completion",
-        upserted
-    );
+    println!("✅ {} patients fictifs prêts pour l'auto-completion", upserted);
 }
