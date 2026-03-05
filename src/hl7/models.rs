@@ -79,8 +79,13 @@ impl Hl7PatientPayload {
         if !matches!(self.sexe.as_str(), "M" | "F" | "U") {
             return Err("sexe invalide (valeurs autorisees: M|F|U)".to_string());
         }
-        if !matches!(self.statut_hospitalisation.as_str(), "hospitalise" | "sorti" | "transfert") {
-            return Err("statut_hospitalisation invalide (hospitalise|sorti|transfert)".to_string());
+        if !matches!(
+            self.statut_hospitalisation.as_str(),
+            "hospitalise" | "sorti" | "transfert"
+        ) {
+            return Err(
+                "statut_hospitalisation invalide (hospitalise|sorti|transfert)".to_string(),
+            );
         }
 
         if let Some(unite) = &self.unite_actuelle {
@@ -110,10 +115,16 @@ impl Hl7TransportOrderPayload {
     pub fn validate(&self) -> Result<(), String> {
         valider_ins(self.ins.as_str()).map_err(|e| format!("INS invalide: {}", e))?;
 
-        if !matches!(self.type_transport.as_str(), "marche" | "fauteuil" | "civiere" | "lit") {
+        if !matches!(
+            self.type_transport.as_str(),
+            "marche" | "fauteuil" | "civiere" | "lit"
+        ) {
             return Err("type_transport invalide (marche|fauteuil|civiere|lit)".to_string());
         }
-        if !matches!(self.priorite.as_str(), "routine" | "urgent" | "asap" | "stat") {
+        if !matches!(
+            self.priorite.as_str(),
+            "routine" | "urgent" | "asap" | "stat"
+        ) {
             return Err("priorite invalide (routine|urgent|asap|stat)".to_string());
         }
         validate_location_value(
@@ -134,7 +145,7 @@ impl Hl7TransportOrderPayload {
             }
             if contains_control_char(commentaire.as_str()) {
                 return Err(
-                    "commentaire contient des caracteres de controle non autorises".to_string()
+                    "commentaire contient des caracteres de controle non autorises".to_string(),
                 );
             }
         }
@@ -206,7 +217,10 @@ fn normalize_vec(values: Vec<String>) -> Vec<String> {
 
 fn validate_name(value: &str, field: &str) -> Result<(), String> {
     if value.is_empty() || value.len() > MAX_NAME_LENGTH {
-        return Err(format!("{} invalide (taille 1..{})", field, MAX_NAME_LENGTH));
+        return Err(format!(
+            "{} invalide (taille 1..{})",
+            field, MAX_NAME_LENGTH
+        ));
     }
     if value
         .chars()
@@ -233,7 +247,10 @@ fn validate_identifier(value: &str, field: &str) -> Result<(), String> {
     if value.is_empty() || value.len() > 255 {
         return Err(format!("{} invalide (taille 1..255)", field));
     }
-    if value.chars().any(|ch| !ch.is_ascii_alphanumeric() && ch != '-' && ch != '_' && ch != '.') {
+    if value
+        .chars()
+        .any(|ch| !ch.is_ascii_alphanumeric() && ch != '-' && ch != '_' && ch != '.')
+    {
         return Err(format!("{} contient des caracteres interdits", field));
     }
     Ok(())
@@ -241,15 +258,21 @@ fn validate_identifier(value: &str, field: &str) -> Result<(), String> {
 
 fn validate_precautions(values: &[String]) -> Result<(), String> {
     if values.len() > MAX_PRECAUTIONS_COUNT {
-        return Err(format!("nombre de precautions trop eleve (max {})", MAX_PRECAUTIONS_COUNT));
+        return Err(format!(
+            "nombre de precautions trop eleve (max {})",
+            MAX_PRECAUTIONS_COUNT
+        ));
     }
     for value in values {
         if value.len() > MAX_PRECAUTION_LENGTH {
-            return Err(format!("une precaution depasse {} caracteres", MAX_PRECAUTION_LENGTH));
+            return Err(format!(
+                "une precaution depasse {} caracteres",
+                MAX_PRECAUTION_LENGTH
+            ));
         }
         if contains_control_char(value.as_str()) {
             return Err(
-                "une precaution contient des caracteres de controle non autorises".to_string()
+                "une precaution contient des caracteres de controle non autorises".to_string(),
             );
         }
     }
@@ -257,7 +280,9 @@ fn validate_precautions(values: &[String]) -> Result<(), String> {
 }
 
 fn contains_control_char(value: &str) -> bool {
-    value.chars().any(|ch| ch.is_control() && ch != '\n' && ch != '\r' && ch != '\t')
+    value
+        .chars()
+        .any(|ch| ch.is_control() && ch != '\n' && ch != '\r' && ch != '\t')
 }
 
 #[cfg(test)]
@@ -282,8 +307,14 @@ mod tests {
     #[test]
     fn ins_error_maps_format() {
         assert_eq!(valider_ins("ABC").err(), Some(InsError::LongueurInvalide));
-        assert_eq!(valider_ins("12345678901234567A5").err(), Some(InsError::FormatInvalide));
-        assert_eq!(valider_ins(INVALID_INS_CHECKSUM).err(), Some(InsError::CleInvalide));
+        assert_eq!(
+            valider_ins("12345678901234567A5").err(),
+            Some(InsError::FormatInvalide)
+        );
+        assert_eq!(
+            valider_ins(INVALID_INS_CHECKSUM).err(),
+            Some(InsError::CleInvalide)
+        );
     }
 
     #[test]

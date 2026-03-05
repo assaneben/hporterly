@@ -40,7 +40,11 @@ async fn adt_admission(
     insert_audit_log(
         &mut conn,
         actor_id.as_str(),
-        if is_created { "PATIENT_CREE" } else { "PATIENT_MAJ" },
+        if is_created {
+            "PATIENT_CREE"
+        } else {
+            "PATIENT_MAJ"
+        },
         "patient",
         payload.ins.as_str(),
         source_ip.as_str(),
@@ -76,7 +80,10 @@ async fn adt_transfer(
     let mut conn = pool.get().map_err(database_connection_error)?;
     let updated = update_patient_location(&mut conn, &payload).map_err(database_query_error)?;
     if updated == 0 {
-        return Err(ApiError::NotFound(format!("Patient introuvable pour INS {}", payload.ins)));
+        return Err(ApiError::NotFound(format!(
+            "Patient introuvable pour INS {}",
+            payload.ins
+        )));
     }
 
     let actor_id = resolve_fallback_actor_id(&mut conn).map_err(database_query_error)?;
@@ -119,7 +126,10 @@ async fn adt_discharge(
     let updated =
         mark_patient_discharged(&mut conn, payload.ins.as_str()).map_err(database_query_error)?;
     if updated == 0 {
-        return Err(ApiError::NotFound(format!("Patient introuvable pour INS {}", payload.ins)));
+        return Err(ApiError::NotFound(format!(
+            "Patient introuvable pour INS {}",
+            payload.ins
+        )));
     }
 
     let closed_count = close_active_transports_for_patient(&mut conn, payload.ins.as_str())
@@ -232,7 +242,9 @@ fn verify_source_ip(req: &HttpRequest, config: &Config) -> ApiResult<String> {
         .map_err(|_| ApiError::InternalServerError("MIRTH_ALLOWED_IP invalide".to_string()))?;
 
     if source_ip != allowed_ip {
-        return Err(ApiError::Forbidden("IP source webhook non autorisee".to_string()));
+        return Err(ApiError::Forbidden(
+            "IP source webhook non autorisee".to_string(),
+        ));
     }
     Ok(source_ip.to_string())
 }
@@ -370,8 +382,14 @@ fn close_active_transports_for_patient(
     patient_ins: &str,
 ) -> QueryResult<usize> {
     let now = Utc::now().naive_utc();
-    let active_statuses =
-        ["pending", "assigned", "in_progress", "picked_up", "arrived", "suspended"];
+    let active_statuses = [
+        "pending",
+        "assigned",
+        "in_progress",
+        "picked_up",
+        "arrived",
+        "suspended",
+    ];
 
     diesel::update(
         tickets::table
@@ -394,8 +412,9 @@ fn build_hl7_ticket(
 ) -> NewTicket {
     let (mode, transport_subtype) = map_transport(payload.type_transport.as_str());
     let priority = map_priority(payload.priorite.as_str());
-    let patient_name =
-        format!("{} {}", patient.last_name.trim(), patient.first_name.trim()).trim().to_string();
+    let patient_name = format!("{} {}", patient.last_name.trim(), patient.first_name.trim())
+        .trim()
+        .to_string();
     let origin = patient
         .service
         .clone()
@@ -508,7 +527,9 @@ fn insert_audit_log(
         user_agent: Some(MIRTH_USER_AGENT.to_string()),
     };
 
-    diesel::insert_into(audit_logs::table).values(&record).execute(conn)
+    diesel::insert_into(audit_logs::table)
+        .values(&record)
+        .execute(conn)
 }
 
 fn database_connection_error(error: diesel::r2d2::PoolError) -> ApiError {

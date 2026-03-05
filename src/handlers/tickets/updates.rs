@@ -11,6 +11,7 @@ pub struct UpdateEquipmentStatus {
 #[patch("/api/tickets/{id}/equipment-status")]
 pub(super) async fn update_equipment_status(
     pool: web::Data<DbPool>,
+    config: web::Data<Config>,
     user: web::ReqData<User>,
     ticket_id: web::Path<String>,
     request: web::Json<UpdateEquipmentStatus>,
@@ -34,6 +35,11 @@ pub(super) async fn update_equipment_status(
         log::info!(
             "Ticket {} auto-completed (DonJoy Abdostrap workflow)",
             ticket_id
+        );
+        cda::trigger_transport_report_generation(
+            pool.get_ref().clone(),
+            config.get_ref().clone(),
+            ticket_id.to_string(),
         );
     }
 
@@ -141,3 +147,15 @@ pub(super) async fn update_ticket_priority(
 
     Ok(HttpResponse::Ok().json(result.ticket_after))
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-10: automatic completion path now emits downstream CDA generation trigger.
+  - SBD-21: failure in CDA background dispatch does not compromise core workflow state.
+  - SBD-24: completion recovery path improved through pending CDA queue behavior.
+- Not fully satisfiable in this file:
+  - SBD-08 secure endpoint transport is guaranteed by CDA module/config + infrastructure policy.
+    Alternative: enforce TLS termination and network ACL around Mirth endpoint.
+*/

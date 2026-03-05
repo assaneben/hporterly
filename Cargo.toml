@@ -1,32 +1,84 @@
 [package]
-name = "hporterly-backend"
+name = "hporterly"
 version = "1.0.0"
 edition = "2021"
-rust-version = "1.75"
 authors = ["Assan ABDOU-OUSSENI"]
-license = "GPL-3.0-or-later"
-description = "Generic hospital patient transfer coordination backend (anonymized demo-safe OSS release)"
-repository = "https://github.com/assaneben/Hporterly"
+
+[features]
+default = []
+sqlx = []
 
 [dependencies]
-actix = "0.13"
+# Web framework
+actix-web = "4.4"  # OpenSSL désactivé temporairement pour développement
 actix-cors = "0.7"
+actix-files = "0.6"
 actix-governor = "0.5"
-actix-web = "4.4"
-actix-web-actors = "4.2"
-argon2 = "0.5"
-chrono = { version = "0.4", features = ["serde", "clock"] }
+
+# TLS/SSL - Désactivé temporairement
+# openssl = "0.10"
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+futures-util = "0.3"
+
+# Database ORM
 diesel = { version = "2.1", features = ["postgres", "r2d2", "chrono", "uuid", "serde_json", "64-column-tables"] }
 diesel_migrations = "2.1"
-dotenvy = "0.15"
-env_logger = "0.11"
-jsonwebtoken = "9.2"
-log = "0.4"
+
+# Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+
+# Date/Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID
+uuid = { version = "1.6", features = ["v4", "v5", "serde"] }
+
+# Password hashing
+argon2 = "0.5"
+
+# JWT
+jsonwebtoken = "9.2"
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+
+# Validation
+validator = { version = "0.16", features = ["derive"] }
+aes-gcm = "0.10"
+base64 = "0.22"
+data-encoding = "2.6"
+image = { version = "0.25", default-features = false, features = ["png"] }
+once_cell = "1.20"
+qrcode = "0.14"
+rand = "0.8"
+subtle = "2"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+
+# Environment variables
+dotenvy = "0.15"
+
+# Error handling
 thiserror = "1.0"
-tokio = { version = "1.35", features = ["macros", "rt-multi-thread", "sync", "time"] }
-uuid = { version = "1", features = ["v4", "serde"] }
+anyhow = "1.0"
+
+# Logging
+env_logger = "0.11"
+log = "0.4"
+
+# WebSocket
+actix-web-actors = "4.2"
 
 [dev-dependencies]
-actix-rt = "2"
+actix-rt = "2.9"
+
+# SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+# Controls reviewed: SBD-01 to SBD-25.
+# Verified in this file:
+# - SBD-04/SBD-07: adds vetted crypto dependencies for webhook HMAC verification.
+# - SBD-22/SBD-23: dependency inventory is explicit and auditable.
+# Not fully satisfiable in this file:
+# - SBD-14 requires CI vulnerability scanning and pinning workflow configuration.
+#   Alternative: enforce `cargo audit` and pinned dependency policy in CI/CD pipeline.

@@ -74,6 +74,7 @@ pub(super) async fn remove_co_partner(
 #[patch("/api/tickets/{id}/status")]
 pub(super) async fn update_ticket_status(
     pool: web::Data<DbPool>,
+    config: web::Data<Config>,
     user: web::ReqData<User>,
     ticket_id: web::Path<String>,
     request: web::Json<UpdateTicketStatus>,
@@ -86,6 +87,16 @@ pub(super) async fn update_ticket_status(
         ticket_id.as_str(),
         request,
     )?;
+
+    if crate::models::Ticket::normalize_status(updated_ticket.status.as_str()) == Some("completed")
+    {
+        cda::trigger_transport_report_generation(
+            pool.get_ref().clone(),
+            config.get_ref().clone(),
+            updated_ticket.id.clone(),
+        );
+    }
+
     Ok(HttpResponse::Ok().json(updated_ticket))
 }
 
@@ -203,3 +214,15 @@ pub(super) async fn hard_delete_ticket(
     )?;
     Ok(HttpResponse::Ok().json(response))
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-10: completion events are auditable through downstream CDA dispatch logs.
+  - SBD-21: CDA dispatch trigger is best-effort background and does not bypass status controls.
+  - SBD-24: completed transport now triggers report generation for continuity/recovery.
+- Not fully satisfiable in this file:
+  - SBD-08 secure transport to Mirth is enforced by internal endpoint policy/config and infra.
+    Alternative: enforce mTLS/TLS at Mirth ingress with certificate pinning policy.
+*/

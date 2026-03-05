@@ -38,6 +38,12 @@ impl UserRepository {
             .first::<User>(conn)
     }
 
+    pub fn find_by_email(conn: &mut PgConnection, email: &str) -> QueryResult<User> {
+        users::table
+            .filter(users::email.eq(email))
+            .first::<User>(conn)
+    }
+
     pub fn find_by_username_optional(
         conn: &mut PgConnection,
         username: &str,
@@ -87,3 +93,15 @@ impl UserRepository {
         diesel::delete(users::table.find(user_id)).execute(conn)
     }
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-01: parameterized Diesel query for email-based identity lookup.
+  - SBD-04: repository support for login identity policy (email/username).
+  - SBD-21: explicit lookup APIs avoid fallback-to-broad queries.
+- Not fully satisfiable in this file:
+  - SBD-10 audit logging and SBD-11 rate limiting are enforced at service/handler layers.
+    Alternative: keep repository pure and enforce controls in auth orchestration layer.
+*/

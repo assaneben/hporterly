@@ -55,14 +55,18 @@ pub struct NewUser {
 
 #[derive(Debug, Deserialize)]
 pub struct LoginRequest {
-    pub username: String,
+    pub email: Option<String>,
+    pub username: Option<String>,
     pub password: String,
 }
 
 #[derive(Debug, Serialize)]
 pub struct LoginResponse {
-    pub token: String,
-    pub user: UserInfo,
+    pub token: Option<String>,
+    pub user: Option<UserInfo>,
+    pub mfa_required: bool,
+    pub session_token_partiel: Option<String>,
+    pub mfa_verified: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -78,3 +82,15 @@ pub struct UserInfo {
 }
 
 // La conversion est geree manuellement dans les handlers pour inclure porter_id via une requete DB.
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-01: login payload now supports explicit credential source fields.
+  - SBD-04: response model supports MFA challenge flow (partial session token).
+  - SBD-21: representation encourages explicit MFA state checks by consumers.
+- Not fully satisfiable in this file:
+  - SBD-07/SBD-08 are implementation-level and cannot be guaranteed by DTOs alone.
+    Alternative: enforce through service/middleware and runtime secret policy.
+*/

@@ -19,6 +19,14 @@ struct Claims {
     username: String,
     role: String,
     exp: usize,
+    #[serde(default)]
+    mfa_verified: bool,
+    #[serde(default = "default_token_kind")]
+    token_kind: String,
+}
+
+fn default_token_kind() -> String {
+    "access".to_string()
 }
 
 // Authentication middleware
@@ -60,8 +68,10 @@ where
     forward_ready!(service);
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        // Skip auth for non-API routes and login endpoint
-        if !req.path().starts_with("/api")
+        let path = req.path().to_string();
+
+        // Skip auth for non-API and non-FHIR routes and selected public endpoints.
+        if (!path.starts_with("/api") && !path.starts_with("/fhir"))
             || req.path() == "/api/auth/login"
             || req.path() == "/api/v1/auth/login"
             || req.path() == "/api/health"
@@ -141,6 +151,18 @@ where
         let service = self.service.clone();
 
         Box::pin(async move {
+            if token_data.claims.token_kind == "mfa_tmp" && path != "/api/auth/mfa/verify" {
+                return Err(actix_web::error::ErrorUnauthorized(ApiError::Unauthorized(
+                    "MFA verification required".to_string(),
+                )));
+            }
+
+            if path.starts_with("/fhir") && !token_data.claims.mfa_verified {
+                return Err(actix_web::error::ErrorUnauthorized(ApiError::Unauthorized(
+                    "MFA verification required for FHIR access".to_string(),
+                )));
+            }
+
             let mut conn = pool.get().map_err(|e| {
                 actix_web::error::ErrorInternalServerError(format!(
                     "Database connection error: {}",
@@ -169,3 +191,16 @@ where
         })
     }
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-04: JWT claim enforcement includes temporary-token isolation and MFA verification semantics.
+  - SBD-05: FHIR access denied unless mfa_verified=true.
+  - SBD-11: expired JWTs rejected by validation; MFA temporary scope constrained.
+  - SBD-21: default deny on missing/invalid auth context.
+- Not fully satisfiable in this file:
+  - SBD-11 account-level MFA attempt quotas are enforced in MFA verify handler, not middleware.
+    Alternative: centralize with distributed limiter (Redis) for multi-instance deployments.
+*/

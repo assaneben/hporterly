@@ -1,3 +1,5 @@
+use crate::cda;
+use crate::config::Config;
 use crate::models::{
     AddCoPartnerRequest, AssignTicketRequest, CreateHelpRequest, CreateTicketRequest,
     DesignateSuccessorRequest, RespondToHelpRequest, UpdateTicketStatus, User,
@@ -67,3 +69,15 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
         .service(update_ticket_notes)
         .service(update_ticket_priority);
 }
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-22: centralized route configuration for ticket lifecycle and assignment controls.
+  - SBD-24: CDA dispatch hooks are integrated through assignment/updates handlers.
+  - SBD-21: no route-level bypass introduced for authorization or workflow transitions.
+- Not fully satisfiable in this file:
+  - SBD-10 detailed action-level audit remains delegated to service layer calls.
+    Alternative: enforce route-level audit middleware for defense in depth.
+*/

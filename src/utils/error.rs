@@ -8,6 +8,7 @@ pub enum ApiError {
     BadRequest(String),
     Unauthorized(String),
     Forbidden(String),
+    TooManyRequests(String),
     InternalServerError(String),
     ValidationError(String),
 }
@@ -25,6 +26,7 @@ impl fmt::Display for ApiError {
             ApiError::BadRequest(msg) => write!(f, "Bad Request: {}", msg),
             ApiError::Unauthorized(msg) => write!(f, "Unauthorized: {}", msg),
             ApiError::Forbidden(msg) => write!(f, "Forbidden: {}", msg),
+            ApiError::TooManyRequests(msg) => write!(f, "Too Many Requests: {}", msg),
             ApiError::InternalServerError(msg) => write!(f, "Internal Server Error: {}", msg),
             ApiError::ValidationError(msg) => write!(f, "Validation Error: {}", msg),
         }
@@ -38,6 +40,7 @@ impl ResponseError for ApiError {
             ApiError::BadRequest(_) => (StatusCode::BAD_REQUEST, "BAD_REQUEST"),
             ApiError::Unauthorized(_) => (StatusCode::UNAUTHORIZED, "UNAUTHORIZED"),
             ApiError::Forbidden(_) => (StatusCode::FORBIDDEN, "FORBIDDEN"),
+            ApiError::TooManyRequests(_) => (StatusCode::TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS"),
             ApiError::InternalServerError(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
             }
@@ -60,3 +63,15 @@ impl ResponseError for ApiError {
 }
 
 pub type ApiResult<T> = Result<T, ApiError>;
+
+/*
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGULATED)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - SBD-11: explicit HTTP 429 support for abuse/rate-limit enforcement.
+  - SBD-13: controlled and structured error responses.
+  - SBD-21: explicit security failure types discourage permissive fallbacks.
+- Not fully satisfiable in this file:
+  - SBD-10 requires caller-side audit event emission when returning security errors.
+    Alternative: add centralized error-to-audit bridge in middleware/handlers.
+*/
