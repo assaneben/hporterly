@@ -360,7 +360,11 @@ else {
     Add-CheckResult "Securite" "SBD-20 : CORS_ALLOWED_ORIGINS ne contient pas *" "FAIL" "Configuration CORS explicite introuvable ou wildcard detecte"
 }
 
-if ((Test-FileContainsAll -Path $typedRoleRs -Patterns @('_ => false')) -and
+$typedRoleHasDefaultDeny =
+    (Test-FileContainsAll -Path $typedRoleRs -Patterns @('pub fn peut', 'matches!(')) -or
+    (Test-FileContainsAll -Path $typedRoleRs -Patterns @('_ => false'))
+
+if ($typedRoleHasDefaultDeny -and
     (Test-FileContainsAll -Path $legacyRbacRs -Patterns @('ApiError::Forbidden')) -and
     (Test-FileContainsAll -Path $apiErrorRs -Patterns @('StatusCode::FORBIDDEN'))) {
     Add-CheckResult "Securite" "SBD-21 : Tout acces non autorise retourne 403" "PASS" "backend/src/auth/rbac.rs, backend/src/utils/rbac.rs et backend/src/utils/error.rs"

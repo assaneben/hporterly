@@ -7,6 +7,8 @@
 .vscode/
 .DS_Store
 coverage/
+frontend/playwright-report/
+playwright-report/
 __pycache__/
 *.pyc
 *.exe
