@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="HPorterly Logo" width="400" />
 </p>
 
-**Solution SaaS de gestion du brancardage et des flux patients**
+**Solution SaaS de coordination du brancardage et des transferts patients**
 <br />
 **Hospital Patient Transfer Coordination & Operations System**
 
