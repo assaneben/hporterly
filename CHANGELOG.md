@@ -34,7 +34,7 @@ Private/internal integration endpoints remain intentionally excluded from public
 ### Build and dependency stability
 
 - Synced the published Rust backend with the dev backend to resolve compilation and dependency mismatches.
-- Added the required Diesel `64-column-tables` feature for the project’s join/table surface.
+- Added the required Diesel `64-column-tables` feature for the project's join/table surface.
 - Reformatted the published codebase with the stable Rust toolchain.
 - Brought `cargo clippy -- -D warnings` back to green on the published branch.
 

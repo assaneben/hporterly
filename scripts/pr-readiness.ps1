@@ -378,7 +378,7 @@ if ($typedRoleHasDefaultDeny -and
     Add-CheckResult "Securite" "SBD-21 : Tout acces non autorise retourne 403" "PASS" "backend/src/auth/rbac.rs, backend/src/utils/rbac.rs et backend/src/utils/error.rs"
 }
 else {
-    Add-CheckResult "Securite" "SBD-21 : Tout acces non autorise retourne 403" "FAIL" "Chaîne fail-secure 403 introuvable"
+    Add-CheckResult "Securite" "SBD-21 : Tout acces non autorise retourne 403" "FAIL" "Chaine fail-secure 403 introuvable"
 }
 
 if (Test-FileContainsAll -Path $hl7ModelsRs -Patterns @('#[test]', 'ins_luhn_accepts_valid_value', 'ins_luhn_rejects_invalid_value', 'ins_error_maps_format')) {
