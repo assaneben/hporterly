@@ -40,8 +40,9 @@
 | --- | --- | --- |
 | Zero `unwrap()` dans les handlers de production | PASS / FAIL / NOT RUN | |
 | Toutes les erreurs sont typees, pas de `Box<dyn Error>` dans les handlers | PASS / FAIL / NOT RUN | |
-| `cargo clippy -- -D warnings` | PASS / FAIL / NOT RUN | |
-| `cargo test` | PASS / FAIL / NOT RUN | |
+| `cargo check --locked --all-targets --all-features` | PASS / FAIL / NOT RUN | |
+| `cargo clippy --locked --all-targets --all-features -- -D warnings` | PASS / FAIL / NOT RUN | |
+| `cargo test --locked --all-targets --all-features` | PASS / FAIL / NOT RUN | |
 
 ### Donnees de Test
 | Controle | Statut | Preuve courte |
@@ -62,7 +63,7 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Verified in this file:
   - OK SBD-10: the template requires explicit evidence for every release claim.
   - OK SBD-21: reviewers must record fail-secure outcomes instead of informal approvals.
-  - OK SBD-22: PR review criteria are centralized and versionable.
+  - OK SBD-22: PR review criteria are centralized and versionable, including locked Cargo commands.
 - Not fully satisfiable in this file:
   - WARN SBD-11: the template cannot enforce runtime throttling by itself.
     Alternative: pair this template with automated checks in CI and runtime tests.

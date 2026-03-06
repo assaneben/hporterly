@@ -55,15 +55,17 @@ Chaque PR doit se terminer par la checklist ci-dessous, dans cet ordre, avec une
 ### Qualite Rust
 - Zero `unwrap()` dans les handlers de production
 - Erreurs typees, pas de `Box<dyn Error>` dans les handlers
-- `cargo clippy -- -D warnings`
-- `cargo test`
+- `cargo check --locked --all-targets --all-features`
+- `cargo clippy --locked --all-targets --all-features -- -D warnings`
+- `cargo test --locked --all-targets --all-features`
 
 ### Donnees de test
 - Aucune donnee patient reelle dans seeds, fixtures ou tests
 - Toute chaine de 19 chiffres consecutive dans les fichiers modifies doit etre revue ou remplacee par un placeholder ou un test builder
 
 ## Preuves minimales
-- Commandes standards: `cargo check`, `cargo test`, `cargo clippy -- -D warnings`
+- Commandes standards: `cargo check --locked --all-targets --all-features`, `cargo test --locked --all-targets --all-features`, `cargo clippy --locked --all-targets --all-features -- -D warnings`
+- Derive `Cargo.toml`/`Cargo.lock`: le mode `--locked` doit rester vert; toute mise a jour du lockfile doit etre isolee et relue
 - Recherche de secrets sur les fichiers modifies
 - Recherche de sequences suspectes de 19 chiffres sur les fichiers modifies
 - Verification qu'aucune documentation publique n'expose de routes internes
@@ -85,7 +87,7 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Verified in this file:
   - OK SBD-10: the PR evidence contract requires traceable proof for each security-relevant claim.
   - OK SBD-21: the protocol fixes fail-secure reporting instead of permissive verbal summaries.
-  - OK SBD-22: delivery and review expectations are centralized in one auditable document.
+  - OK SBD-22: delivery and review expectations are centralized in one auditable document, including locked dependency resolution.
 - Not fully satisfiable in this file:
   - WARN SBD-08: this document cannot enforce transport encryption or encryption at rest by itself.
     Alternative: keep runtime validation and CI checks in code and infrastructure.
