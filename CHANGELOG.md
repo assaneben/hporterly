@@ -16,6 +16,8 @@ Private/internal integration endpoints remain intentionally excluded from public
 - Refreshed public user documentation to align `README.md`, `docs/API.md`, and `docs/USER-WORKFLOWS.md` with the current public API surface, MFA flow, user roles, and operational scope.
 - Added a dedicated changelog to make branch evolution and published updates easier to track.
 - Added a public-safe HL7v2 and Mirth integration overview describing the `DPI -> Mirth -> normalized JSON -> Hporterly` flow without exposing private endpoints.
+- Added a public-safe FHIR R4 overview that documents the interoperability target while explicitly stating that no FHIR router is currently published on this branch.
+- Added a public-safe CDA R2 overview that documents completed-transport report generation and never-drop retry behavior.
 
 ### CI and governance
 
