@@ -4,41 +4,70 @@
   <img src="assets/logo.png" alt="HPorterly Logo" width="400" />
 </p>
 
-**Solution SaaS de gestion du brancardage et des flux patients**
+**Solution SaaS de coordination du brancardage et des flux hospitaliers internes**
 <br />
 **Hospital Patient Transfer Coordination & Operations System**
 
-![CI](https://img.shields.io/github/actions/workflow/status/assaneben/Hporterly/ci.yml?branch=main&label=CI)
+![CI](https://img.shields.io/github/actions/workflow/status/assaneben/hporterly/ci.yml?branch=main&label=CI)
 ![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)
 
-Rust/Actix backend for coordinating hospital patient transfer operations in a
-fully generic and anonymized form. It provides queue management, priority and
-status workflows, realtime updates (WebSocket), and synthetic demo data for evaluation.
+Hporterly is a Rust/Actix backend for hospital transport operations:
+patient transfers, equipment logistics, specimen routing, mission supervision,
+notifications, and audit-friendly workflow tracking.
 
 - Version: `1.0.0`
 - Author: Assan ABDOU-OUSSENI
-- License: GPL-3.0-or-later (commercial license available)
+- License: GPL-3.0-or-later
+- Device classification: `MDR Class I` (logistics only, no automated clinical decision)
 
-> Strict rule: **Never commit real patient/facility data.**
+> Strict rule: **Never commit real patient or facility data.**
 
-## Key features
+## Business scope
 
-- Generic transfer request queue (no facility-specific references)
-- Priorities and statuses
-- History/event scaffolding
-- JWT auth endpoint (demo-safe)
-- WebSocket endpoint for realtime push wiring
-- PostgreSQL + Diesel schema and migrations (15 migration folders)
-- Seed/generator scripts for synthetic demo datasets
-- CI safety checks for forbidden strings and secret-like patterns
+Hporterly is an operational workflow platform for internal hospital transport.
+
+- No automated clinical scoring or recommendation engine
+- Manual operational priority management
+- Role-based mission handling
+- Patient identity vigilance support, including INS-related workflows
+- Private hospital integration channels for inbound updates and outbound reporting
+
+## User roles
+
+- `Demandeur`: creates and follows transport requests from a workstation
+- `Brancardier`: receives and executes missions, updates field status, requests help
+- `Regulateur` / `Administrateur`: supervises queue, assignments, priorities, referentials, and users
+
+## Core capabilities
+
+- Ticket lifecycle with controlled statuses:
+  `pending -> assigned -> in_progress -> arrived -> completed`
+- Allowed exception flows for `suspended` and `canceled`
+- Priority handling from `1` (highest urgency) to `4` (scheduled/programmed)
+- JWT authentication with MFA enrollment, activation, and verification flow
+- Notification center, unread counters, message recipients, and targeted messages
+- Porter availability and skill management
+- Patient and service lookup endpoints
+- Referential management for services, equipment, transport modes, and specimens
+- Append-only audit-oriented service layer
+- CDA generation on completed transport and private hospital reporting pipeline
+
+## Documentation map
+
+- [User Workflows](docs/USER-WORKFLOWS.md)
+- [Public API Overview](docs/API.md)
+- [INS Confirmation Flow](docs/ins-confirmation-flow.md)
+- [PR Delivery Protocol](docs/pr-delivery-protocol.md)
+- [Threat Model](docs/THREAT_MODEL.md)
+- [Architecture](docs/ARCHITECTURE.md)
 
 ## Quickstart
 
 ### Docker
 
 ```bash
-git clone https://github.com/assaneben/Hporterly.git
-cd Hporterly
+git clone https://github.com/assaneben/hporterly.git
+cd hporterly
 cp .env.example .env
 docker compose up --build
 ```
@@ -46,21 +75,30 @@ docker compose up --build
 Services:
 
 - API: `http://localhost:8080`
-- Health: `http://localhost:8080/healthz`
-- PostgreSQL: `localhost:5432`
+- Health: `http://localhost:8080/health`
+- Readiness: `http://localhost:8080/ready`
 - Frontend (optional compose service): `http://localhost:8081`
 
 ### Local development
 
 Requirements:
 
-- Rust 1.75+ (tested against current stable toolchains)
-- PostgreSQL 15+ (compose uses PostgreSQL 17)
+- Rust `1.93.0` recommended for CI parity
+- PostgreSQL `15+`
 - Optional: `diesel_cli` for local migration workflows
 
 ```bash
 cp .env.example .env
 cargo run
+```
+
+Recommended validation commands before publishing changes:
+
+```bash
+cargo fmt --check
+cargo check --locked --all-targets --all-features
+cargo clippy --locked --all-targets --all-features -- -D warnings
+cargo test --locked --all-targets --all-features
 ```
 
 Optional Diesel CLI:
@@ -71,63 +109,62 @@ diesel setup
 diesel migration run
 ```
 
-## Configuration (`.env.example`)
+## Configuration
 
-Key variables:
+Key variables in `.env.example`:
 
 - `APP_HOST`, `APP_PORT`
 - `DATABASE_URL`
 - `JWT_SECRET`, `JWT_ISSUER`, `JWT_EXP_MINUTES`
+- `MFA_ISSUER`, `MFA_ENCRYPTION_KEY`
 - `CORS_ALLOWED_ORIGINS`
+- `RATE_LIMIT_LOGIN_PER_IP`
+- `RATE_LIMIT_MFA_PER_ACCOUNT`
+- `RATE_LIMIT_API_PER_USER`
 - `RUST_LOG`
 
 All values in `.env.example` are placeholders only.
 
-## Demo data
+## Public HTTP surface
 
-Two demo datasets are included under `examples/`:
+Canonical public routes are documented in [docs/API.md](docs/API.md).
 
-- Minimal demo: transfer queue fields only (no patient fields)
-- Full demo: strictly fake patient fields for UI/integration testing
+Public route families currently include:
 
-All demo files include the header notice: `DEMO DATA — SYNTHETIC / NOT REAL`.
+- authentication and MFA: `/api/auth/*`
+- tickets and mission handling: `/api/tickets*`
+- porter operations: `/api/porters*`
+- patient search: `/api/patients`
+- service lookup: `/api/services`
+- notifications and user messaging: `/api/notifications*`
+- user administration and GDPR export/delete flows: `/api/users*`
+- referentials and priority rules: `/api/referentials/*`, `/api/priority-rules*`
 
-Seed/generator scripts:
+Legacy `/api/v1/*` paths currently redirect to `/api/*`. New clients should use `/api/*`.
 
-- `scripts/seed_demo_users.py`
-- `scripts/seed_demo_patients.py`
-- `scripts/generate_fake_data.py`
+## Private integrations
 
-## Architecture
+This public documentation intentionally omits private hospital integration routes.
 
-```mermaid
-flowchart LR
-  Client[Web UI / API Consumer] -->|HTTP JSON| Actix[Actix-web API]
-  Client -->|WebSocket| WS[Realtime Gateway]
-  Actix --> Auth[JWT + Argon2 Auth Service]
-  Actix --> Queue[Transfer Queue Service]
-  Actix --> DB[(PostgreSQL)]
-  DB --> Diesel[Diesel ORM + Migrations]
-  Scripts[Synthetic Seed / Generators] --> DB
-  Scripts --> Examples[examples/*.json]
-```
+- Inbound hospital updates are handled through private integration channels
+- Outbound CDA reporting is handled through private reporting channels
+- Internal integration endpoints are not part of the public API contract
 
-## Security notes
+## Security and data handling
 
-- This repository provides **DEMO DATA only** (synthetic / not real).
-- No production secrets or credentials are included.
-- Production use with PHI/health-related data requires appropriate security,
-  compliance, access control, backup, and audit controls.
-- CI runs a sanity check that blocks forbidden organization aliases and obvious secrets.
+- Demo and seed content must stay synthetic only
+- No production secrets are committed in this repository
+- MFA is available on the public auth flow
+- Locked Cargo validation is enforced in CI to prevent silent lockfile drift
+- Public docs must not expose private/internal integration endpoints
 
 ## Roadmap
 
-- SSO (OIDC/SAML)
-- Expanded RBAC and policy enforcement
-- Persistent audit trail export
-- Optional HL7/FHIR connectors
-- Advanced dispatching rules and SLA dashboards
-- Metrics/tracing/observability
+- SSO federation (OIDC/SAML)
+- Stronger observability and metrics
+- Expanded public API stabilization
+- PWA/mobile workflow hardening
+- Additional reporting and operational dashboards
 
 ## Contributing
 
@@ -139,14 +176,23 @@ GPL-3.0-or-later. See `LICENSE`.
 
 ## Commercial licensing
 
-Proprietary/commercial licensing is available for OEM/white-label deployments,
-proprietary redistribution, and closed-source integrations.
+Proprietary/commercial licensing is available for OEM and closed-source deployments.
 
 - Email: `Couverture@ik.me`
-- Alternative: Open a **Commercial License Request** issue using `.github/ISSUE_TEMPLATE/commercial_license_request.yml`
+- Alternative: open a **Commercial License Request** issue using `.github/ISSUE_TEMPLATE/commercial_license_request.yml`
 
 ## Disclaimer
 
-Hporterly is an operational workflow tool reference implementation. Real
-deployments must be designed and validated with appropriate security and
-compliance controls and organizational policies. This repository is not legal advice.
+Hporterly is an operational transport workflow system. Real deployments must be
+validated against applicable security, privacy, safety, and organizational
+requirements. This repository is not medical, legal, or regulatory advice.
+
+SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
+- Controls reviewed: SBD-01 to SBD-25.
+- Verified in this file:
+  - OK SBD-05: public documentation stays limited to public routes and role-visible workflows.
+  - OK SBD-09: no real patient or facility data is introduced.
+  - OK SBD-22: public scope, roles, and operational constraints are documented in one auditable entry point.
+- Not fully satisfiable in this file:
+  - WARN SBD-08: this document cannot itself enforce TLS or encryption at rest.
+    Alternative: keep transport/storage controls in runtime configuration and deployment policy.
