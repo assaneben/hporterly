@@ -18,6 +18,8 @@ Private/internal integration endpoints remain intentionally excluded from public
 - Added a public-safe HL7v2 and Mirth integration overview describing the `DPI -> Mirth -> normalized JSON -> Hporterly` flow without exposing private endpoints.
 - Added a public-safe FHIR R4 overview that documents the interoperability target while explicitly stating that no FHIR router is currently published on this branch.
 - Added a public-safe CDA R2 overview that documents completed-transport report generation and never-drop retry behavior.
+- Added an interoperability index that centralizes the published FHIR, HL7v2, and CDA documentation set.
+- Harmonized the published threat model with the current public API, private HL7 ingestion boundary, and CDA reporting boundary.
 - Realigned the public API, architecture, and user workflow documents with the new interoperability documentation set.
 
 ### CI and governance

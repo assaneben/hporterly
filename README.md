@@ -57,6 +57,7 @@ Hporterly is an operational workflow platform for internal hospital transport.
 - [User Workflows](docs/USER-WORKFLOWS.md)
 - [Public API Overview](docs/API.md)
 - [INS Confirmation Flow](docs/ins-confirmation-flow.md)
+- [Interoperability Index](docs/INTEROPERABILITY.md)
 - [FHIR R4 Overview](docs/FHIR-R4.md)
 - [HL7v2 + Mirth Overview](docs/HL7v2-MIRTH-INTEGRATION.md)
 - [CDA R2 Overview](docs/CDA-R2.md)
@@ -71,6 +72,8 @@ Recent branch evolution is tracked in [CHANGELOG.md](CHANGELOG.md).
 
 Highlights for the current published baseline:
 
+- `2026-03-06`: interoperability index added to centralize FHIR R4, HL7v2, and CDA documentation in one public-safe entry point
+- `2026-03-06`: threat model harmonized with the current public API, private HL7 ingestion boundary, and CDA reporting boundary
 - `2026-03-06`: FHIR R4 interoperability target documented with explicit non-publication status on the current branch
 - `2026-03-06`: CDA R2 reporting flow documented from completed transport to private downstream delivery
 - `2026-03-06`: HL7v2 integration overview documented for the `DPI -> Mirth -> normalized JSON -> HPorterly` flow
