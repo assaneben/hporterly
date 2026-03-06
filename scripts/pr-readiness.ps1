@@ -97,6 +97,11 @@ function Invoke-CommandCheck {
         Add-CheckResult $Section $Requirement "PASS" "$commandText -> exit 0"
     }
     else {
+        $joinedOutput = $output -join "`n"
+        if ($joinedOutput -match 'os error 4551|strat.gie de contr.le d.application a bloqu.|Application Control') {
+            Add-CheckResult $Section $Requirement "NOT RUN" "$commandText -> execution bloquee par la politique hote locale (Windows application control)"
+            return
+        }
         $firstLine = ($output | Select-Object -First 1)
         if ([string]::IsNullOrWhiteSpace($firstLine)) {
             $firstLine = "commande echouee sans sortie exploitable"
@@ -470,4 +475,6 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Not fully satisfiable in this file:
   - WARN SBD-05: endpoint-level data isolation cannot be proven statically in all cases.
     Alternative: keep integration tests per role and mark non-executed checks as NOT RUN with evidence.
+  - WARN SBD-24: local host application-control policies can block binary test execution outside CI.
+    Alternative: keep Linux CI as the execution authority and report local host-policy blocks as NOT RUN with explicit evidence.
 #>
