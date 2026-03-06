@@ -403,9 +403,9 @@ else {
     Add-CheckResult "Qualite Code Rust" "Toutes les erreurs sont typees, pas de Box<dyn Error> dans les handlers" "FAIL" ("Box<dyn Error> detecte: " + (Get-FirstHitSummary -RepositoryPath $repoPath -Hits $boxedErrorHits))
 }
 
-Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo clippy -- -D warnings" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("clippy", "--", "-D", "warnings")
-Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo test" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("test")
-Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo check" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("check")
+Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo clippy --locked --all-targets --all-features -- -D warnings" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("clippy", "--locked", "--all-targets", "--all-features", "--", "-D", "warnings")
+Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo test --locked --all-targets --all-features" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("test", "--locked", "--all-targets", "--all-features")
+Invoke-CommandCheck -Section "Qualite Code Rust" -Requirement "cargo check --locked --all-targets --all-features" -WorkingDirectory $backendPath -Executable "cargo" -Arguments @("check", "--locked", "--all-targets", "--all-features")
 
 $seedFixturePaths = @()
 foreach ($path in @(
@@ -464,7 +464,8 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Verified in this file:
   - OK SBD-07: scans modified files for suspicious hardcoded secrets before PR submission.
   - OK SBD-10: produces explicit evidence lines for every checklist item.
-  - OK SBD-11: runs cargo/clippy/test checks and auth-related static guardrail verification.
+  - OK SBD-11: runs locked cargo/clippy/test checks and auth-related static guardrail verification.
+  - OK SBD-22: enforces reproducible dependency resolution through Cargo's locked mode.
   - OK SBD-21: reports fail-secure checks explicitly and returns non-zero on FAIL.
 - Not fully satisfiable in this file:
   - WARN SBD-05: endpoint-level data isolation cannot be proven statically in all cases.

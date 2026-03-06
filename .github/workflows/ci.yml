@@ -31,8 +31,11 @@ jobs:
       - name: Format check
         run: cargo fmt --all -- --check
 
+      - name: Lockfile integrity
+        run: cargo check --locked --all-targets --all-features
+
       - name: Lint
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
 
       - name: Test
-        run: cargo test --all-targets --all-features
+        run: cargo test --locked --all-targets --all-features
