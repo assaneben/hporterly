@@ -16,6 +16,12 @@ Operational constraints:
 - no automated clinical decision
 - no public documentation of private integration routes
 
+Related interoperability references:
+
+- [FHIR R4 Overview](FHIR-R4.md)
+- [HL7v2 + Mirth Overview](HL7v2-MIRTH-INTEGRATION.md)
+- [CDA R2 Overview](CDA-R2.md)
+
 ## User roles
 
 ### Demandeur
@@ -245,6 +251,14 @@ User-facing actions may trigger:
 
 Public user documentation does not list internal audit schemas or private reporting channels.
 
+## Interoperability touchpoints
+
+User workflows can intersect with interoperability features without exposing those private channels directly:
+
+- upstream patient and transport context can originate from hospital integration flows documented in [HL7v2 + Mirth Overview](HL7v2-MIRTH-INTEGRATION.md)
+- completed transport execution can feed private downstream reporting documented in [CDA R2 Overview](CDA-R2.md)
+- a standards-oriented public interoperability target is described separately in [FHIR R4 Overview](FHIR-R4.md)
+
 ## Private integrations
 
 The published product also contains private hospital integration capabilities, but they are intentionally outside the public user contract.
@@ -262,6 +276,7 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
   - OK SBD-05: role-visible workflows are documented without exposing private/internal capabilities.
   - OK SBD-09: no real patient, INS, or facility data is included.
   - OK SBD-21: fail-secure expectations are reflected in controlled workflow descriptions.
+  - OK SBD-22: workflow documentation is now explicitly connected to the separate interoperability documents.
 - Not fully satisfiable in this file:
   - WARN SBD-10: audit behavior is described functionally but enforced by runtime services, not by documentation.
     Alternative: keep runtime audit tests and append-only database controls.

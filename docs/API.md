@@ -16,6 +16,22 @@ It intentionally excludes private hospital integration routes and internal-only 
 
 New clients should use `/api/*`.
 
+## Standards and interoperability notes
+
+This document covers the currently published public `/api/*` surface.
+
+Related interoperability documentation is split intentionally:
+
+- [FHIR R4 Overview](FHIR-R4.md)
+  - documents the intended standards-oriented interoperability target
+  - does not claim that a full FHIR router is currently published on this branch
+- [HL7v2 + Mirth Overview](HL7v2-MIRTH-INTEGRATION.md)
+  - documents upstream hospital ingestion as a private integration flow
+- [CDA R2 Overview](CDA-R2.md)
+  - documents downstream transport reporting as a private reporting flow
+
+This separation prevents private/internal integrations from being mistaken for public API commitments.
+
 ## Authentication and session
 
 ### Public endpoints
@@ -206,6 +222,7 @@ The following are intentionally not documented here:
 - private hospital ingestion channels
 - private reporting/export channels
 - internal-only integration endpoints
+- unpublished FHIR resource routes
 
 If a route or channel is not listed here, it should not be treated as part of the public API contract.
 
@@ -214,7 +231,7 @@ SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Verified in this file:
   - OK SBD-05: only public route families are documented; private/internal channels are explicitly excluded.
   - OK SBD-09: no patient data examples or sensitive values are included.
-  - OK SBD-22: public API contract is centralized and auditable.
+  - OK SBD-22: public API contract is centralized and auditable, with explicit separation from interoperability documents.
 - Not fully satisfiable in this file:
   - WARN SBD-11: rate limiting is described indirectly through auth semantics but enforced in runtime code, not documentation.
     Alternative: keep runtime tests and CI checks for throttling behavior.
