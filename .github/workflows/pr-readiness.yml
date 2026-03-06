@@ -25,7 +25,7 @@ jobs:
         shell: pwsh
         env:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: ./scripts/pr-readiness.ps1 -RepoRoot . -BackendRoot ./backend -Ci
+        run: ./scripts/pr-readiness.ps1 -RepoRoot . -BackendRoot . -Ci
 
 # SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 # Controls reviewed: SBD-01 to SBD-25.
