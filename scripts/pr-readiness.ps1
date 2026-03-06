@@ -198,11 +198,14 @@ function Get-ChangedFileList {
 
 function Find-PatternHits {
     param(
-        [Parameter(Mandatory = $true)]
         [string[]]$Paths,
         [Parameter(Mandatory = $true)]
         [string]$Pattern
     )
+
+    if (-not $Paths -or @($Paths).Count -eq 0) {
+        return @()
+    }
 
     $hits = @()
     foreach ($path in $Paths) {

@@ -57,9 +57,22 @@ Hporterly is an operational workflow platform for internal hospital transport.
 - [User Workflows](docs/USER-WORKFLOWS.md)
 - [Public API Overview](docs/API.md)
 - [INS Confirmation Flow](docs/ins-confirmation-flow.md)
+- [Changelog](CHANGELOG.md)
 - [PR Delivery Protocol](docs/pr-delivery-protocol.md)
 - [Threat Model](docs/THREAT_MODEL.md)
 - [Architecture](docs/ARCHITECTURE.md)
+
+## Recent updates
+
+Recent branch evolution is tracked in [CHANGELOG.md](CHANGELOG.md).
+
+Highlights for the current published baseline:
+
+- `2026-03-06`: public documentation refreshed to match the current public API, user roles, and MFA flow
+- `2026-03-06`: CI now enforces locked Cargo validation to prevent silent dependency drift
+- `2026-03-06`: `Cargo.lock` refreshed and republished to align dependency resolution with the manifest
+- `2026-03-05`: PR governance layer tightened with readiness checks, evidence requirements, and security-oriented delivery protocol
+- `2026-03-05`: build stability restored by syncing the full Rust backend surface, fixing Diesel `64-column-tables`, and eliminating Clippy warnings on the published branch
 
 ## Quickstart
 
