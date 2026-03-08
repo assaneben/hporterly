@@ -12,9 +12,13 @@ It documents trust boundaries, exposed surfaces, likely threats, and existing mi
 - Language: `FR user / EN documentation`
 - Deployment context available in this repository:
   - public `/api/*` application surface
+  - public supervisory reporting route for archived operational data
   - private HL7 ingestion surface separated from the public server
   - private CDA downstream reporting flow with persistence-backed retry
   - PostgreSQL operational persistence
+  - Traefik-based production reverse proxy and HTTPS redirection policy in compose
+  - Prometheus metrics exposure and structured logging
+  - backup job and retention helpers for PostgreSQL dumps
   - CI and governance controls for locked dependency validation and secret scanning
 
 ## System scope
@@ -36,6 +40,7 @@ Primary assets include:
 
 - patient-linked operational identifiers such as INS
 - transport workflow state and assignment data
+- archived historical datasets used for operations reporting
 - user identities, roles, and MFA state
 - audit-oriented traces and security-relevant metadata
 - CDA transport reports awaiting or completing delivery
@@ -50,6 +55,7 @@ The public application boundary includes:
 
 - `/api/*` business routes
 - authentication and MFA flows
+- supervisory reporting route
 - notifications and user messaging
 - health and readiness endpoints
 
@@ -142,6 +148,7 @@ Relevant mitigations already present in the published branch:
 Primary threats:
 
 - broken access control across tickets, users, and operational data
+- over-broad access to archived reporting datasets
 - privilege escalation across `Demandeur`, `Brancardier`, and `Regulateur`
 - injection through malformed request data
 - abuse through excessive request volume
@@ -153,7 +160,22 @@ Relevant mitigations already present in the published branch:
 - role-based authorization helpers with fail-secure default denial
 - explicit CORS origin configuration
 - request validation and operational guardrails in service handlers
+- bounded reporting windows and defensive dataset truncation
 - documentation guardrails that exclude private/internal endpoints
+
+### Observability and metrics surface
+
+Primary threats:
+
+- accidental public exposure of Prometheus metrics
+- leakage of sensitive identifiers through logs or metric labels
+- misuse of operational endpoints as an information-disclosure channel
+
+Relevant mitigations already present in the published branch:
+
+- metrics payload limited to HTTP and DB pool telemetry
+- structured logging support without exposing patient payloads in public documentation
+- deployment guidance to keep `/metrics` behind trusted infrastructure
 
 ### Private HL7-derived ingestion flow
 
@@ -205,6 +227,7 @@ Manual-review items still required outside the published code snapshot:
 - database role separation
 - encryption-at-rest enforcement details
 - backup protection and retention operations
+- restore testing and backup encryption policy
 - infrastructure-level tamper protections
 
 ## Security properties the published branch is designed to provide
@@ -225,6 +248,7 @@ This public threat model does not claim verified production conformance for:
 - TLS termination policy in the deployment environment
 - encryption at rest for all operational data stores
 - reverse-proxy, WAF, or network ACL enforcement
+- public exposure control for `/metrics`
 - database administration hardening
 - mobile device posture management
 - formal FHIR conformance or a live published FHIR router on this branch
@@ -240,8 +264,9 @@ The highest-priority manual review points for a real deployment are:
 2. Verify secret management and rotation for JWT, MFA, and private integration credentials.
 3. Verify private-boundary source restrictions and authenticated transport in production.
 4. Verify database backup, retention, and tamper-resistance controls for audit-oriented data.
-5. Verify downstream CDA retry operations and alerting on persistent delivery failure.
-6. Verify role-isolation and data-access tests across all user-facing endpoints.
+5. Verify that metrics scraping stays internal-only and that no sensitive labels are exposed.
+6. Verify downstream CDA retry operations and alerting on persistent delivery failure.
+7. Verify role-isolation and data-access tests across all user-facing endpoints.
 
 SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)
 - Controls reviewed: SBD-01 to SBD-25.

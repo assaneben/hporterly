@@ -45,10 +45,15 @@ Hporterly is an operational workflow platform for internal hospital transport.
 - Allowed exception flows for `suspended` and `canceled`
 - Priority handling from `1` (highest urgency) to `4` (scheduled/programmed)
 - JWT authentication with MFA enrollment, activation, and verification flow
+- Historical reporting for supervision with day/week/month/year views and archived data consultation
+- Year-based reporting filters with bounded historical dataset export for operational dashboards
 - Notification center, unread counters, message recipients, and targeted messages
 - Porter availability and skill management
 - Patient and service lookup endpoints
 - Referential management for services, equipment, transport modes, and specimens
+- Cursor-ready ticket listing for large queues (`cursor_created_at`, `cursor_id`)
+- Structured JSON logging and Prometheus metrics endpoints for observability
+- Production deployment bundle with Traefik TLS termination and PostgreSQL backup automation
 - Append-only audit-oriented service layer
 - CDA generation on completed transport and private hospital reporting pipeline
 
@@ -72,6 +77,10 @@ Recent branch evolution is tracked in [CHANGELOG.md](CHANGELOG.md).
 
 Highlights for the current published baseline:
 
+- `2026-03-08`: production deployment bundle hardened with Traefik TLS termination, placeholder-only `.env.production.example`, JSON logs, metrics exposure, and backup automation helpers
+- `2026-03-08`: historical supervision reports added with archived ticket consultation, year selection, and bounded reporting dataset endpoint
+- `2026-03-08`: MFA persistence finalized with dedicated `mfa_secrets` migration and restored login compatibility for MFA-enabled accounts
+- `2026-03-08`: health/readiness aliases (`/healthz`, `/readyz`) and Prometheus metrics (`/metrics`, `/api/metrics`) published for operations tooling
 - `2026-03-06`: interoperability index added to centralize FHIR R4, HL7v2, and CDA documentation in one public-safe entry point
 - `2026-03-06`: threat model harmonized with the current public API, private HL7 ingestion boundary, and CDA reporting boundary
 - `2026-03-06`: FHIR R4 interoperability target documented with explicit non-publication status on the current branch
@@ -85,21 +94,26 @@ Highlights for the current published baseline:
 
 ## Quickstart
 
-### Docker
+### Docker / production-like compose
+
+The published `docker-compose.yml` expects the companion frontend repository to be available as a
+sibling checkout named `../Hporterly-frontend`.
 
 ```bash
 git clone https://github.com/assaneben/hporterly.git
+git clone https://github.com/assaneben/Hporterly-frontend.git ../Hporterly-frontend
 cd hporterly
-cp .env.example .env
-docker compose up --build
+cp .env.production.example .env.production
+docker compose --env-file .env.production up --build
 ```
 
 Services:
 
-- API: `http://localhost:8080`
-- Health: `http://localhost:8080/health`
-- Readiness: `http://localhost:8080/ready`
-- Frontend (optional compose service): `http://localhost:8081`
+- Public HTTPS entrypoint: `https://<PUBLIC_DOMAIN>` through Traefik
+- Health: `/health`, `/healthz`, `/api/health`, `/api/healthz`
+- Readiness: `/ready`, `/readyz`, `/api/ready`, `/api/readyz`
+- Metrics: `/metrics`, `/api/metrics` (internal scraping only, do not expose publicly)
+- Backup job on demand: `docker compose --env-file .env.production run --rm db-backup`
 
 ### Local development
 
@@ -107,10 +121,11 @@ Requirements:
 
 - Rust `1.93.0` recommended for CI parity
 - PostgreSQL `15+`
+- Companion frontend repository if you want the full PWA locally
 - Optional: `diesel_cli` for local migration workflows
 
 ```bash
-cp .env.example .env
+cp backend/.env.example .env
 cargo run
 ```
 
@@ -133,19 +148,24 @@ diesel migration run
 
 ## Configuration
 
-Key variables in `.env.example`:
+Key variables in `backend/.env.example` and `.env.production.example`:
 
-- `APP_HOST`, `APP_PORT`
+- `HOST`, `PORT`
 - `DATABASE_URL`
-- `JWT_SECRET`, `JWT_ISSUER`, `JWT_EXP_MINUTES`
+- `JWT_SECRET`, `JWT_EXPIRATION`
 - `MFA_ISSUER`, `MFA_ENCRYPTION_KEY`
+- `MIRTH_WEBHOOK_SECRET`, `MIRTH_ALLOWED_IP`, `HL7_INTERNAL_PORT`
 - `CORS_ALLOWED_ORIGINS`
+- `LOG_FORMAT`, `RUST_LOG`
 - `RATE_LIMIT_LOGIN_PER_IP`
 - `RATE_LIMIT_MFA_PER_ACCOUNT`
 - `RATE_LIMIT_API_PER_USER`
-- `RUST_LOG`
+- `AUDIT_RETENTION_DAYS`
+- `CDA_MIRTH_ENDPOINT`
+- `PUBLIC_DOMAIN`, `ACME_EMAIL`
+- `BACKUP_DIR`, `BACKUP_RETENTION_DAYS`, `S3_BACKUP_URI`
 
-All values in `.env.example` are placeholders only.
+All values in `.env.example` and `.env.production.example` are placeholders only.
 
 ## Public HTTP surface
 
@@ -160,6 +180,7 @@ Public route families currently include:
 - service lookup: `/api/services`
 - notifications and user messaging: `/api/notifications*`
 - user administration and GDPR export/delete flows: `/api/users*`
+- operational historical reporting: `/api/reports/operations`
 - referentials and priority rules: `/api/referentials/*`, `/api/priority-rules*`
 
 Legacy `/api/v1/*` paths currently redirect to `/api/*`. New clients should use `/api/*`.
@@ -177,16 +198,19 @@ This public documentation intentionally omits private hospital integration route
 - Demo and seed content must stay synthetic only
 - No production secrets are committed in this repository
 - MFA is available on the public auth flow
+- Production compose is designed for reverse-proxy TLS termination, not direct Internet exposure of Actix
+- Metrics endpoints should be scraped from trusted infrastructure only
+- Reporting archives are restricted to supervisory roles through authenticated API access
+- Backup artifacts must be stored on isolated storage and restore-tested regularly
 - Locked Cargo validation is enforced in CI to prevent silent lockfile drift
 - Public docs must not expose private/internal integration endpoints
 
 ## Roadmap
 
 - SSO federation (OIDC/SAML)
-- Stronger observability and metrics
-- Expanded public API stabilization
-- PWA/mobile workflow hardening
-- Additional reporting and operational dashboards
+- Restore testing and disaster-recovery drills for PostgreSQL backups
+- Expanded public API stabilization and companion frontend release alignment
+- PWA/mobile workflow hardening and stronger automated E2E coverage
 
 ## Contributing
 

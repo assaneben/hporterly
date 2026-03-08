@@ -1,42 +1,72 @@
-﻿# 02 - Resume technique du projet (pre-rempli)
+# 02 - Resume technique du projet
 
 ## Identite projet
+
 - Nom affiche: HPorterly
-- Type: application web de coordination de transferts/transport interne (workflow operationnel)
-- Architecture: backend Rust + frontend web Vanilla JS/PWA
+- Type: application de coordination de transports internes hospitaliers
+- Positionnement: logiciel logistique de sante, sans aide a la decision clinique
+- Perimetre du depot publie: backend Rust + documentation + bundle de deploiement
 
-## Arborescence observee (racine)
-- `backend/`
-- `frontend/`
-- `scripts/`
-- scripts de lancement Windows (`LANCER_APP.ps1`, `.bat`, `run.bat`, etc.)
+## Arborescence publiee
 
-## Backend (observe)
-- Langage: Rust (edition 2021)
-- Framework HTTP: Actix-web 4.4
-- CORS: actix-cors 0.7
-- Rate limiting: actix-governor 0.5
-- ORM/DB: Diesel 2.1 + PostgreSQL (r2d2)
-- Async: Tokio 1.35
-- Auth: JWT (`jsonwebtoken` 9.2)
-- Hashing MDP: Argon2 0.5
-- WebSocket: actix-web-actors 4.2
-- Binaire principal (script de lancement): `hporterly.exe`
-- Seeders observes: `seed_demo_users.exe`, `seed_demo_patients.exe`
+- `src/`
+- `migrations/`
+- `docs/`
+- `ops/`
+- `deploy/`
+- `docker-compose.yml`
+- `.env.production.example`
 
-## Frontend (observe)
-- HTML/CSS/JavaScript Vanilla (ES modules)
-- PWA (manifest + service worker)
-- SPA hash-based (modules/router)
-- Assets: `fonts/`, `icons/`, `styles/`, `modules/`
+## Backend
 
-## Lancement local observe (script `LANCER_APP.ps1`)
-- Service PostgreSQL Windows vise: `postgresql-x64-17`
-- Compilation backend release: `cargo build --release --bin hporterly --bin seed_demo_users --bin seed_demo_patients`
-- Seed utilisateurs demo puis patients fictifs
-- Healthcheck backend: `GET http://127.0.0.1:8080/api/health`
-- URL ouverte par le script: `http://localhost:8080`
+- Langage: Rust 2021
+- Framework HTTP: Actix-web 4.x
+- Persistance: PostgreSQL 15+ via Diesel + r2d2
+- Authentification: JWT + MFA TOTP/backup codes
+- Chiffrement secrets MFA: AES-256-GCM
+- Hash mots de passe et codes de secours: Argon2id
+- Logs: `tracing` / `tracing-subscriber` avec format compact ou JSON
+- Metriques: Prometheus (`/metrics`, `/api/metrics`)
+- Rate limiting: `actix-governor`
+- Interoperabilite privee: HL7 normalise en entree, CDA R2 en sortie
 
-## Remarques importantes
-- Ce resume decrit l'etat observe du projet et des scripts de lancement.
-- Completer avec les regles metier et comportements exacts dans les fichiers suivants.
+## Capacites backend observees
+
+- gestion complete du cycle de vie des tickets
+- assignation, reassignation, pause, annulation et cloture
+- co-portage / aide entre brancardiers
+- administration utilisateurs, porters et referentiels
+- regles de priorite configurables
+- statistiques historiques de supervision avec archives et selection d'annee
+- healthchecks, readiness, logs structures et metriques
+- script de backup PostgreSQL et exemple de cron
+
+## Frontend de reference
+
+- repo compagnon PWA Vanilla JS / Vite
+- routes observees dans le workspace de reference:
+  - `/login`
+  - `/dashboard`
+  - `/porter`
+  - `/form`
+  - `/admin/porters`
+  - `/admin/settings`
+- modules metier visibles:
+  - login MFA
+  - dashboard demandeur / administrateur / regulateur
+  - espace rapports avec vues jour/semaine/mois/annee
+  - app mobile porter
+
+## Topologie de deploiement publiee
+
+- Traefik en reverse proxy TLS
+- backend Rust expose seulement sur le reseau Docker
+- frontend servi par un conteneur dedie
+- PostgreSQL sur reseau prive Docker
+- job optionnel de backup PostgreSQL
+
+## Remarques
+
+- Le `docker-compose.yml` publie suppose un checkout du repo frontend compagnon comme dossier sibling `../Hporterly-frontend`.
+- Les donnees de demo doivent rester synthetiques.
+- Les endpoints d'integration hospitaliere prives ne sont pas publies dans les docs publiques.

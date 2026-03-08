@@ -9,6 +9,7 @@ pub struct Config {
     pub host: String,
     pub port: u16,
     pub hl7_internal_port: u16,
+    pub frontend_static_dir: String,
     pub jwt_secret: String,
     pub jwt_expiration: i64,
     pub enable_tls: bool,
@@ -34,18 +35,12 @@ pub fn get_required_env(key: &str) -> String {
         #[cfg(not(debug_assertions))]
         {
             log::error!("Missing required environment variable: {}", key);
-            panic!(
-                "Missing required environment variable: {}. Please check your .env file.",
-                key
-            );
+            panic!("Missing required environment variable: {}. Please check your .env file.", key);
         }
 
         #[cfg(debug_assertions)]
         {
-            log::warn!(
-                "Using default value for missing environment variable: {}",
-                key
-            );
+            log::warn!("Using default value for missing environment variable: {}", key);
             format!("dev-{}", key)
         }
     })
@@ -76,6 +71,24 @@ fn default_environment() -> &'static str {
     }
 }
 
+fn default_frontend_static_dir(environment: &str) -> &'static str {
+    if environment.eq_ignore_ascii_case("production") {
+        "../frontend/dist"
+    } else {
+        "../frontend"
+    }
+}
+
+fn is_placeholder_secret(value: &str) -> bool {
+    let normalized = value.trim().to_ascii_lowercase();
+    normalized.is_empty()
+        || normalized.contains("change_me")
+        || normalized.contains("changeme")
+        || normalized.contains("replace_with")
+        || normalized.contains("your-secret")
+        || normalized.contains("placeholder")
+}
+
 impl Config {
     pub fn from_env() -> Self {
         let environment = env::var("APP_ENV")
@@ -85,19 +98,19 @@ impl Config {
         Config {
             database_url: get_required_env("DATABASE_URL"),
             host: get_optional_env("HOST", "127.0.0.1"),
-            port: get_optional_env("PORT", "8080")
-                .parse()
-                .expect("PORT must be a valid number"),
+            port: get_optional_env("PORT", "8080").parse().expect("PORT must be a valid number"),
             hl7_internal_port: get_optional_env("HL7_INTERNAL_PORT", "8081")
                 .parse()
                 .expect("HL7_INTERNAL_PORT must be a valid number"),
+            frontend_static_dir: get_optional_env(
+                "FRONTEND_STATIC_DIR",
+                default_frontend_static_dir(environment.as_str()),
+            ),
             jwt_secret: get_required_env("JWT_SECRET"),
             jwt_expiration: get_optional_env("JWT_EXPIRATION", "86400")
                 .parse()
                 .expect("JWT_EXPIRATION must be a valid number"),
-            enable_tls: get_optional_env("ENABLE_TLS", "false")
-                .parse()
-                .unwrap_or(false),
+            enable_tls: get_optional_env("ENABLE_TLS", "false").parse().unwrap_or(false),
             environment,
             cors_allowed_origins: parse_csv_env(&get_optional_env("CORS_ALLOWED_ORIGINS", "")),
             mirth_webhook_secret: get_required_env("MIRTH_WEBHOOK_SECRET"),
@@ -128,6 +141,8 @@ impl Config {
 
     /// Validate configuration
     pub fn validate(&self) -> Result<(), String> {
+        let is_production = self.environment.eq_ignore_ascii_case("production");
+
         // Validate JWT secret is strong enough
         if self.jwt_secret.len() < 32 {
             #[cfg(debug_assertions)]
@@ -140,19 +155,26 @@ impl Config {
                 return Err("JWT_SECRET must be at least 32 characters long".to_string());
             }
         }
+        if is_production && is_placeholder_secret(self.jwt_secret.as_str()) {
+            return Err("JWT_SECRET uses a placeholder value in production".to_string());
+        } else if !is_production && is_placeholder_secret(self.jwt_secret.as_str()) {
+            log::warn!("JWT_SECRET uses a placeholder value (dev mode)");
+        }
 
         // Validate JWT expiration is reasonable
         if self.jwt_expiration < 60 || self.jwt_expiration > 86400 * 7 {
             return Err("JWT_EXPIRATION must be between 60 seconds and 7 days".to_string());
         }
 
-        let is_production = self.environment.eq_ignore_ascii_case("production");
         if is_production && self.cors_allowed_origins.is_empty() {
             return Err("CORS_ALLOWED_ORIGINS must be set in production".to_string());
         }
 
         if self.port == self.hl7_internal_port {
             return Err("PORT and HL7_INTERNAL_PORT must be different".to_string());
+        }
+        if self.frontend_static_dir.trim().is_empty() {
+            return Err("FRONTEND_STATIC_DIR must not be empty".to_string());
         }
 
         self.mirth_allowed_ip
@@ -162,7 +184,7 @@ impl Config {
         if self.mirth_webhook_secret.len() < 32 {
             if is_production {
                 return Err(
-                    "MIRTH_WEBHOOK_SECRET must be at least 32 characters in production".to_string(),
+                    "MIRTH_WEBHOOK_SECRET must be at least 32 characters in production".to_string()
                 );
             }
             log::warn!("MIRTH_WEBHOOK_SECRET is shorter than 32 characters (dev mode)");
@@ -171,7 +193,7 @@ impl Config {
         if self.mirth_webhook_secret == "CHANGEME_256_BIT_SECRET" {
             if is_production {
                 return Err(
-                    "MIRTH_WEBHOOK_SECRET uses placeholder value and must be replaced".to_string(),
+                    "MIRTH_WEBHOOK_SECRET uses placeholder value and must be replaced".to_string()
                 );
             }
             log::warn!("MIRTH_WEBHOOK_SECRET uses placeholder value (dev mode)");

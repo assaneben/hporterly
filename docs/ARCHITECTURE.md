@@ -14,6 +14,12 @@ At runtime, the application starts two distinct HTTP surfaces:
 - a public application server for `/api/*`, health, readiness, and static frontend delivery
 - a private HL7 ingestion server bound separately for internal hospital integration traffic
 
+The published deployment bundle also includes:
+
+- a Traefik reverse proxy for TLS termination and HTTP security headers
+- a separate frontend container sourced from the companion PWA repository
+- an optional PostgreSQL backup job container for scheduled dumps
+
 This separation is part of the security boundary, not just an implementation detail.
 
 ## Main backend components
@@ -28,16 +34,25 @@ Key published components include:
   - loads environment variables
   - validates security-sensitive settings
   - enforces separation between public and internal ports
+- `src/telemetry.rs`
+  - initializes compact or JSON logging
+  - records Prometheus counters, histograms, and DB pool gauges
 - `src/middleware/auth.rs`
   - enforces JWT authentication on protected routes
   - blocks temporary MFA tokens from business access
   - requires `mfa_verified=true` for `/fhir/*`
 - `src/handlers/*`
   - public business routes for auth, tickets, notifications, referentials, users, and related operations
+- `src/handlers/health.rs`
+  - exposes health, readiness, version, and metrics routes
+- `src/handlers/reports.rs`
+  - exposes bounded historical reporting for supervisory dashboards
 - `src/hl7/*`
   - internal hospital event ingestion from normalized JSON
 - `src/cda/mod.rs`
   - CDA R2 generation and downstream dispatch with persistence-backed retry
+- `ops/backups/*`
+  - production backup helper and scheduling examples
 
 ## Public application surface
 
@@ -57,6 +72,7 @@ The public server also applies:
 - global rate limiting
 - JWT-based authentication middleware
 - MFA-aware access rules
+- request telemetry and structured logging
 
 ## Private hospital integration surface
 
@@ -110,6 +126,16 @@ The business overview is documented separately in:
 
 - [CDA R2 Overview](CDA-R2.md)
 
+The public supervisory reporting route is distinct from CDA downstream reporting.
+
+Its purpose is to:
+
+- expose bounded historical ticket datasets to authenticated supervisors
+- include archived missions for analytics purposes
+- support year-based and period-based reporting in the companion frontend
+
+It must not be confused with private interoperability exports.
+
 ## Persistence model
 
 The application uses PostgreSQL as the operational system of record.
@@ -118,6 +144,7 @@ Persistence is used for:
 
 - business entities such as users, tickets, patients, porters, and referentials
 - authentication and MFA state
+- archived/completed/canceled mission history used for reports
 - audit-oriented event traces
 - pending CDA delivery retry state
 
@@ -148,6 +175,17 @@ This backend remains positioned as:
 Upstream patient context may be displayed for operational execution.
 It is not transformed into a clinical recommendation engine.
 
+## Observability and operations
+
+Published operations capabilities include:
+
+- JSON or compact logs depending on environment
+- Prometheus metrics for HTTP throughput/latency and DB pool state
+- health/readiness aliases for platform probes
+- PostgreSQL dump automation examples for backup retention
+
+Metrics are part of the operational surface and should be scraped only from trusted infrastructure.
+
 ## Explicit exclusions
 
 This public architecture document intentionally excludes:
@@ -155,8 +193,7 @@ This public architecture document intentionally excludes:
 - private endpoint paths
 - internal ports
 - secret names and secret values
-- production topology details
-- reverse proxy and load balancer configuration
+- production secrets and certificates
 - network-level trust lists
 
 SECURITY REVIEW (SecureByDesign v1.1.0 - REGLEMENTE)

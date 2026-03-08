@@ -1,6 +1,8 @@
 use chrono::NaiveDateTime;
+use diesel::deserialize::QueryableByName;
 use diesel::prelude::*;
 use diesel::sql_query;
+use diesel::sql_types::Integer;
 use diesel::PgConnection;
 
 use crate::models::{NewTicket, Ticket};
@@ -15,11 +17,19 @@ pub struct TicketListFilters {
     pub transport_type: Option<String>,
     pub visible_to_porters_only: bool,
     pub requester_scope: Option<(String, String)>,
+    pub cursor_created_at: Option<NaiveDateTime>,
+    pub cursor_id: Option<String>,
     pub limit: i64,
     pub offset: i64,
 }
 
 pub struct TicketRepository;
+
+#[derive(Debug, QueryableByName)]
+struct ReportYearRow {
+    #[diesel(sql_type = Integer)]
+    year: i32,
+}
 
 impl TicketRepository {
     pub fn lock_ticket_id_generation(conn: &mut PgConnection) -> QueryResult<usize> {
@@ -34,9 +44,7 @@ impl TicketRepository {
     }
 
     pub fn insert(conn: &mut PgConnection, payload: &NewTicket) -> QueryResult<Ticket> {
-        diesel::insert_into(tickets::table)
-            .values(payload)
-            .get_result::<Ticket>(conn)
+        diesel::insert_into(tickets::table).values(payload).get_result::<Ticket>(conn)
     }
 
     pub fn activate_programmed_tickets_visibility(conn: &mut PgConnection) -> QueryResult<usize> {
@@ -79,11 +87,23 @@ impl TicketRepository {
         if let Some(transport_type) = &filters.transport_type {
             query_builder = query_builder.filter(tickets::transport_type.eq(transport_type));
         }
+        if let Some(cursor_created_at) = filters.cursor_created_at {
+            if let Some(cursor_id) = filters.cursor_id.as_deref() {
+                query_builder =
+                    query_builder.filter(tickets::created_at.lt(cursor_created_at).or(
+                        tickets::created_at.eq(cursor_created_at).and(tickets::id.lt(cursor_id)),
+                    ));
+            } else {
+                query_builder = query_builder.filter(tickets::created_at.lt(cursor_created_at));
+            }
+        }
+
+        let effective_offset = if filters.cursor_created_at.is_some() { 0 } else { filters.offset };
 
         query_builder
-            .order(tickets::created_at.desc())
+            .order((tickets::created_at.desc(), tickets::id.desc()))
             .limit(filters.limit)
-            .offset(filters.offset)
+            .offset(effective_offset)
             .load::<Ticket>(conn)
     }
 
@@ -91,13 +111,36 @@ impl TicketRepository {
         tickets::table.find(ticket_id).first::<Ticket>(conn)
     }
 
+    pub fn list_for_reports_range(
+        conn: &mut PgConnection,
+        dataset_start: NaiveDateTime,
+        dataset_end: NaiveDateTime,
+        limit: i64,
+    ) -> QueryResult<Vec<Ticket>> {
+        tickets::table
+            .filter(tickets::created_at.ge(dataset_start))
+            .filter(tickets::created_at.le(dataset_end))
+            .order((tickets::created_at.desc(), tickets::id.desc()))
+            .limit(limit)
+            .load::<Ticket>(conn)
+    }
+
+    pub fn list_report_years(conn: &mut PgConnection) -> QueryResult<Vec<i32>> {
+        let rows = sql_query(
+            "SELECT DISTINCT EXTRACT(YEAR FROM created_at)::int AS year
+             FROM tickets
+             ORDER BY year DESC",
+        )
+        .load::<ReportYearRow>(conn)?;
+
+        Ok(rows.into_iter().map(|row| row.year).collect())
+    }
+
     pub fn list_by_requester(
         conn: &mut PgConnection,
         requester_id: &str,
     ) -> QueryResult<Vec<Ticket>> {
-        tickets::table
-            .filter(tickets::requester_id.eq(requester_id))
-            .load::<Ticket>(conn)
+        tickets::table.filter(tickets::requester_id.eq(requester_id)).load::<Ticket>(conn)
     }
 
     pub fn anonymize_requester(
@@ -187,10 +230,7 @@ impl TicketRepository {
         status: &str,
     ) -> QueryResult<Ticket> {
         diesel::update(tickets::table.find(ticket_id))
-            .set((
-                tickets::porter_id.eq::<Option<String>>(None),
-                tickets::status.eq(status),
-            ))
+            .set((tickets::porter_id.eq::<Option<String>>(None), tickets::status.eq(status)))
             .get_result::<Ticket>(conn)
     }
 
@@ -271,10 +311,7 @@ impl TicketRepository {
         ticket_assignments::table
             .filter(ticket_assignments::ticket_id.eq_any(ticket_ids))
             .filter(ticket_assignments::is_active.eq(true))
-            .order((
-                ticket_assignments::ticket_id.asc(),
-                ticket_assignments::assigned_at.asc(),
-            ))
+            .order((ticket_assignments::ticket_id.asc(), ticket_assignments::assigned_at.asc()))
             .select((
                 ticket_assignments::ticket_id,
                 ticket_assignments::porter_id,
@@ -293,12 +330,7 @@ impl TicketRepository {
 
         users::table
             .filter(users::id.eq_any(requester_ids))
-            .select((
-                users::id,
-                users::username,
-                users::first_name,
-                users::last_name,
-            ))
+            .select((users::id, users::username, users::first_name, users::last_name))
             .load::<(String, String, String, String)>(conn)
     }
 }

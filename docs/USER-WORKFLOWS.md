@@ -73,6 +73,7 @@ Main responsibilities:
 - Every public action is role-protected
 - Authentication uses JWT; MFA can add a second verification step
 - Mission statuses follow controlled transitions
+- Completed and canceled missions are archived and remain consultable through supervisory reporting
 - Sensitive operational actions are designed to be auditable
 - Demo and test content must stay synthetic only
 
@@ -209,6 +210,25 @@ The notifications module supports:
 - recipient discovery
 - targeted operational messages
 
+### 5. Consult operational reports
+
+Supervisory users can switch to the reporting workspace and consult:
+
+- current day activity
+- current week activity
+- current month activity
+- full selected year history
+- custom date windows for investigation
+
+The reporting workflow supports:
+
+- archived mission consultation
+- year selection
+- filters by porter, priority, status, origin, destination, transport type, and shift
+- activity, SLA, team, cartography, incidents, and compliance views
+
+Historical reporting uses a dedicated bounded API and is not available to demandeurs or brancardiers.
+
 ## Mission status reference
 
 Normalized statuses visible to clients:
@@ -250,6 +270,18 @@ User-facing actions may trigger:
 - audit-oriented backend actions
 
 Public user documentation does not list internal audit schemas or private reporting channels.
+
+## Reporting and archives
+
+Archived missions remain available for supervisory analytics.
+
+Typical usage:
+
+- compare current period versus previous equivalent period
+- review archived yearly activity by selecting a target year
+- inspect volume, SLA pressure, porter load, and incidents without reopening closed missions
+
+This reporting capability is operational analytics only. It is not a clinical BI or medical decision module.
 
 ## Interoperability touchpoints
 

@@ -6,7 +6,7 @@ Objectif:
 
 Comment utiliser ce dossier:
 1. Lire `00_INDEX_COMPLETUDE.md`
-2. Completer les fichiers marques `[A COMPLETER]`
+2. Utiliser les documents comme base de reprise et ajouter uniquement les preuves manquantes hors repo public
 3. Ajouter les preuves (captures, exports anonymises, scenarios, logs de test)
 4. Verifier `15_CHECKLIST_AVANT_PARTAGE_A_UN_TIERS.md`
 5. Partager ce dossier + le code source + les scripts de lancement
@@ -19,5 +19,5 @@ Important:
 Contenu de ce pack:
 - Resume technique du projet actuel
 - Checklist de reproduction identique
-- Modeles de specs metier / RBAC / API / E2E / deploiement
+- Specs metier / RBAC / API / E2E / deploiement documentees
 - Inventaires auto-generes (arborescence, versions outils, fichiers cles)

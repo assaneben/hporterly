@@ -1,20 +1,56 @@
-version: "3.9"
-
 services:
+  proxy:
+    image: traefik:v3.3
+    container_name: hporterly-proxy
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --api.dashboard=false
+      - --accesslog=true
+      - --log.level=INFO
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./deploy/traefik/letsencrypt:/letsencrypt
+    networks:
+      - hporterly_net
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.hporterly-compress.compress=true
+      - traefik.http.middlewares.hporterly-security.headers.stsSeconds=31536000
+      - traefik.http.middlewares.hporterly-security.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.hporterly-security.headers.stsPreload=true
+      - traefik.http.middlewares.hporterly-security.headers.frameDeny=true
+      - traefik.http.middlewares.hporterly-security.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.hporterly-security.headers.browserXssFilter=true
+      - traefik.http.middlewares.hporterly-security.headers.referrerPolicy=strict-origin-when-cross-origin
+      - traefik.http.middlewares.hporterly-security.headers.permissionsPolicy=geolocation=(),camera=(),microphone=()
+
   db:
     image: postgres:17-alpine
     container_name: hporterly-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: hporterly
-      POSTGRES_USER: hporterly_user
-      POSTGRES_PASSWORD: change_me_placeholder
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    expose:
+      - "5432"
     volumes:
       - hporterly_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hporterly_user -d hporterly"]
+      test: ["CMD-SHELL", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -30,19 +66,45 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env.example
     environment:
-      DATABASE_URL: postgres://hporterly_user:change_me_placeholder@db:5432/hporterly
-    ports:
-      - "8080:8080"
+      DATABASE_URL: ${DATABASE_URL}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      HL7_INTERNAL_PORT: ${HL7_INTERNAL_PORT}
+      ENABLE_TLS: ${ENABLE_TLS}
+      APP_ENV: ${APP_ENV}
+      ENVIRONMENT: ${ENVIRONMENT}
+      LOG_FORMAT: ${LOG_FORMAT}
+      RUST_LOG: ${RUST_LOG}
+      JWT_SECRET: ${JWT_SECRET}
+      MIRTH_WEBHOOK_SECRET: ${MIRTH_WEBHOOK_SECRET}
+      MIRTH_ALLOWED_IP: ${MIRTH_ALLOWED_IP}
+      MFA_ISSUER: ${MFA_ISSUER}
+      MFA_ENCRYPTION_KEY: ${MFA_ENCRYPTION_KEY}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      RATE_LIMIT_LOGIN_PER_IP: ${RATE_LIMIT_LOGIN_PER_IP}
+      RATE_LIMIT_MFA_PER_ACCOUNT: ${RATE_LIMIT_MFA_PER_ACCOUNT}
+      RATE_LIMIT_API_PER_USER: ${RATE_LIMIT_API_PER_USER}
+      AUDIT_RETENTION_DAYS: ${AUDIT_RETENTION_DAYS}
+      CDA_MIRTH_ENDPOINT: ${CDA_MIRTH_ENDPOINT}
+    expose:
+      - "8080"
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
       interval: 10s
       timeout: 5s
       retries: 10
     networks:
       - hporterly_net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hporterly-api.rule=Host(`${PUBLIC_DOMAIN}`) && (PathPrefix(`/api`) || Path(`/health`) || Path(`/ready`))
+      - traefik.http.routers.hporterly-api.entrypoints=websecure
+      - traefik.http.routers.hporterly-api.tls=true
+      - traefik.http.routers.hporterly-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.hporterly-api.middlewares=hporterly-compress,hporterly-security
+      - traefik.http.routers.hporterly-api.priority=100
+      - traefik.http.services.hporterly-api.loadbalancer.server.port=8080
 
   frontend:
     build:
@@ -53,8 +115,42 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    ports:
-      - "8081:80"
+    expose:
+      - "80"
+    networks:
+      - hporterly_net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hporterly-web.rule=Host(`${PUBLIC_DOMAIN}`)
+      - traefik.http.routers.hporterly-web.entrypoints=websecure
+      - traefik.http.routers.hporterly-web.tls=true
+      - traefik.http.routers.hporterly-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.hporterly-web.middlewares=hporterly-compress,hporterly-security
+      - traefik.http.routers.hporterly-web.priority=10
+      - traefik.http.services.hporterly-web.loadbalancer.server.port=80
+
+  db-backup:
+    image: postgres:17-alpine
+    container_name: hporterly-db-backup
+    profiles:
+      - ops
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGHOST: ${PGHOST}
+      PGPORT: ${PGPORT}
+      BACKUP_DIR: ${BACKUP_DIR}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS}
+      S3_BACKUP_URI: ${S3_BACKUP_URI:-}
+    entrypoint: ["/bin/sh", "/usr/local/bin/pg_backup.sh"]
+    volumes:
+      - ./deploy/backups:/backups
+      - ./ops/backups/pg_backup.sh:/usr/local/bin/pg_backup.sh:ro
     networks:
       - hporterly_net
 

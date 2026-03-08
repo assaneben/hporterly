@@ -1,0 +1,5 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Daily compressed backup at 02:15 UTC
+15 2 * * * cd /opt/hporterly && docker compose --env-file .env.production run --rm db-backup >> /var/log/hporterly-db-backup.log 2>&1

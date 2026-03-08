@@ -9,9 +9,15 @@ It intentionally excludes private hospital integration routes and internal-only 
 - Legacy compatibility redirect: `/api/v1/* -> /api/*`
 - Health endpoints:
   - `/health`
+  - `/healthz`
   - `/ready`
+  - `/readyz`
+  - `/metrics`
   - `/api/health`
+  - `/api/healthz`
   - `/api/ready`
+  - `/api/readyz`
+  - `/api/metrics`
   - `/api/version`
 
 New clients should use `/api/*`.
@@ -66,6 +72,27 @@ Possible outcomes:
 
 `POST /api/auth/mfa/verify` exchanges the temporary token for a full access token after TOTP or backup-code verification.
 
+## Platform health and observability
+
+Published platform routes:
+
+- `GET /health`
+- `GET /healthz`
+- `GET /ready`
+- `GET /readyz`
+- `GET /api/health`
+- `GET /api/healthz`
+- `GET /api/ready`
+- `GET /api/readyz`
+- `GET /metrics`
+- `GET /api/metrics`
+- `GET /api/version`
+
+Operational note:
+
+- `/metrics` and `/api/metrics` are intended for internal Prometheus scraping only
+- do not expose metrics endpoints on the public Internet
+
 ## Operational API families
 
 ### Tickets and mission lifecycle
@@ -100,6 +127,18 @@ Recommendations:
 
 - `GET /api/tickets/{id}/recommendations`
 
+List query parameters currently supported on `GET /api/tickets`:
+
+- `include_archived`
+- `status`
+- `priority`
+- `porter_id`
+- `transport_type`
+- `limit`
+- `offset`
+- `cursor_created_at`
+- `cursor_id`
+
 ### Porter operations
 
 - `GET /api/porters`
@@ -125,6 +164,36 @@ Recommendations:
 - `GET /api/notifications/message-recipients`
 - `POST /api/notifications/send-message`
 - `DELETE /api/notifications/{notification_id}`
+
+### Historical reporting
+
+- `GET /api/reports/operations`
+
+Role scope:
+
+- `Regulateur`
+- `Administrateur`
+- compatibility aliases accepted by backend role guards: `admin`, `super_regul`
+
+Required query parameters:
+
+- `dataset_start` in RFC3339 or compatible timestamp format
+- `dataset_end` in RFC3339 or compatible timestamp format
+
+Response shape:
+
+- `tickets`
+- `available_years`
+- `truncated`
+- `dataset_start`
+- `dataset_end`
+
+Behavioral notes:
+
+- includes archived tickets when they fall inside the requested dataset window
+- rejects windows longer than the configured reporting maximum
+- may truncate oversized datasets defensively
+- designed to feed supervisory dashboards for day/week/month/year consultation
 
 ### User administration and GDPR
 
@@ -188,6 +257,7 @@ Recommendations:
   - manage own porter status and read notifications
 - `Regulateur` / `Administrateur`
   - assign, reassign, pause, cancel, and supervise missions
+  - consult historical operational reports and archived periods
   - override priorities
   - manage referentials, users, porters, and targeted messaging
 
@@ -223,6 +293,7 @@ The following are intentionally not documented here:
 - private reporting/export channels
 - internal-only integration endpoints
 - unpublished FHIR resource routes
+- private scraping topology for `/metrics`
 
 If a route or channel is not listed here, it should not be treated as part of the public API contract.
 

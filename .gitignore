@@ -1,6 +1,7 @@
 /target
 **/*.rs.bk
 .env
+.env.production
 .env.local
 *.log
 .idea/
@@ -12,4 +13,7 @@ playwright-report/
 __pycache__/
 *.pyc
 *.exe
+deploy/backups/*.dump
+deploy/backups/*.dump.gz
+deploy/traefik/letsencrypt/acme.json
 docs/dev-handoff/16_ANNEXES_CONFIDENTIELLES*.md

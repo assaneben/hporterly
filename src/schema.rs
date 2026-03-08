@@ -39,6 +39,18 @@ diesel::table! {
 }
 
 diesel::table! {
+    mfa_secrets (user_id) {
+        #[max_length = 255]
+        user_id -> Varchar,
+        secret_enc -> Text,
+        active -> Bool,
+        backup_codes -> Jsonb,
+        created_at -> Timestamp,
+        activated_at -> Nullable<Timestamp>,
+    }
+}
+
+diesel::table! {
     notification_preferences (id) {
         #[max_length = 255]
         id -> Varchar,
@@ -345,6 +357,7 @@ diesel::table! {
 
 diesel::joinable!(audit_logs -> users (user_id));
 diesel::joinable!(help_requests -> tickets (ticket_id));
+diesel::joinable!(mfa_secrets -> users (user_id));
 diesel::joinable!(notification_preferences -> users (user_id));
 diesel::joinable!(notifications -> tickets (related_ticket_id));
 diesel::joinable!(notifications -> users (user_id));
@@ -356,6 +369,7 @@ diesel::joinable!(tickets -> users (requester_id));
 diesel::allow_tables_to_appear_in_same_query!(
     audit_logs,
     help_requests,
+    mfa_secrets,
     notification_preferences,
     notifications,
     patients,

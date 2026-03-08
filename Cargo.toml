@@ -67,6 +67,10 @@ anyhow = "1.0"
 # Logging
 env_logger = "0.11"
 log = "0.4"
+prometheus = "0.13"
+tracing = "0.1"
+tracing-log = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
 
 # WebSocket
 actix-web-actors = "4.2"

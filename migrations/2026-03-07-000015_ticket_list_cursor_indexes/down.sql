@@ -1,0 +1,3 @@
+DROP INDEX IF EXISTS idx_tickets_requester_created_id;
+DROP INDEX IF EXISTS idx_tickets_active_visible_created_id;
+DROP INDEX IF EXISTS idx_tickets_active_status_porter_created_id;

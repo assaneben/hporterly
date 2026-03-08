@@ -7,7 +7,28 @@ Private/internal integration endpoints remain intentionally excluded from public
 
 ## [Unreleased]
 
-- No unpublished public documentation changes are currently pending.
+### Security and infrastructure
+
+- Hardened the published deployment bundle with a Traefik reverse proxy, HTTPS redirection, security headers, compression, and placeholder-only production environment examples.
+- Added a production backup job (`db-backup`), a reusable `pg_backup.sh` script, and a cron example for compressed PostgreSQL dumps with retention.
+- Added structured JSON logging support and Prometheus metrics exposure through `/metrics` and `/api/metrics`.
+- Added health/readiness aliases (`/healthz`, `/readyz`, `/api/healthz`, `/api/readyz`) for conventional platform probes.
+
+### Authentication and persistence
+
+- Added the `mfa_secrets` migration and schema support required by the MFA flow.
+- Restored login compatibility for MFA-enabled users by aligning runtime auth expectations with the database schema.
+
+### Reporting and data access
+
+- Added `/api/reports/operations` for historical supervisory reporting.
+- Added archived-statistics support with available years, bounded date-window requests, and dataset truncation protection.
+- Added combined indexes and cursor-ready list support for large ticket datasets.
+
+### Documentation
+
+- Refreshed `README.md`, `docs/API.md`, `docs/ARCHITECTURE.md`, `docs/USER-WORKFLOWS.md`, and `docs/THREAT_MODEL.md` to cover the production topology, observability, MFA persistence, and historical reporting.
+- Completed the main handoff/runbook documents in `docs/dev-handoff/` with current commands, environment variables, RBAC summary, operations runbook, and reporting behavior.
 
 ## [2026-03-06]
 

@@ -8,6 +8,7 @@ pub mod models;
 pub mod repositories;
 pub mod schema;
 pub mod services;
+pub mod telemetry;
 pub mod utils;
 
 use diesel::r2d2::{self, ConnectionManager};

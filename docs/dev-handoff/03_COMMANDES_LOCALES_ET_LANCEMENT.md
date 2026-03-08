@@ -1,42 +1,84 @@
-﻿# 03 - Commandes locales et lancement [A COMPLETER + PRE-REMPLI]
+# 03 - Commandes locales et lancement
 
-## Demarrage rapide observe (Windows PowerShell)
-Script principal:
-- `./LANCER_APP.ps1`
+## Backend local
 
-Ce script observe:
-1. Verifie/demarre PostgreSQL local
-2. Compile le backend en `release`
-3. Lance les seeders demo
-4. Lance le backend
-5. Attend le healthcheck `/api/health`
-6. Ouvre `http://localhost:8080`
+Depuis la racine du depot publie:
 
-## Commandes backend (references observees)
-- Build: `cargo build --release --bin hporterly --bin seed_demo_users --bin seed_demo_patients`
-- Run (manuel): `[A COMPLETER]` ex. `cargo run --bin hporterly`
-- Migrations: `diesel migration run`
-- Tests: `cargo test`
-- Format: `cargo fmt`
-- Lint: `cargo clippy`
+```powershell
+cp backend/.env.example .env
+cargo run
+```
 
-## Commandes frontend (a confirmer)
-- Serveur statique local: `[A COMPLETER]` (ex. `python -m http.server 3000` dans `frontend/`)
-- URL frontend locale: `[A COMPLETER]`
-- Build frontend (si pipeline specifique): `[A COMPLETER]`
+Commandes utiles:
 
-## Demarrage Docker [A COMPLETER]
-- `docker compose up --build`
-- Services attendus:
-  - backend: `[A COMPLETER]`
-  - frontend: `[A COMPLETER]`
-  - db: `[A COMPLETER]`
+- build: `cargo build --release --bin hporterly --bin seed_demo_users --bin seed_demo_patients`
+- run backend: `cargo run`
+- seeds demo utilisateurs: `cargo run --bin seed_demo_users`
+- seeds demo patients: `cargo run --bin seed_demo_patients`
+- migrations: `diesel migration run`
+- check: `cargo check --all-targets`
+- tests: `cargo test --all-targets`
+- lint: `cargo clippy --all-targets --all-features -- -D warnings`
 
-## Recette de demarrage (pas a pas)
-- [ ] DB accessible
-- [ ] Migrations appliquees
-- [ ] Seeds fictifs lances
-- [ ] Backend repond au healthcheck
-- [ ] Frontend charge sans erreur console
-- [ ] Connexion demo fonctionne
-- [ ] Flux principal teste
+URL backend locale:
+
+- API: `http://localhost:8080`
+- health: `http://localhost:8080/health`
+- ready: `http://localhost:8080/ready`
+- metrics: `http://localhost:8080/metrics`
+
+## Frontend compagnon
+
+Le frontend n'est pas versionne dans ce depot publie. Il doit etre clone a cote du backend:
+
+```powershell
+git clone https://github.com/assaneben/Hporterly-frontend.git ..\Hporterly-frontend
+cd ..\Hporterly-frontend
+npm install
+npm run dev
+```
+
+Commandes frontend observees:
+
+- dev: `npm run dev`
+- build: `npm run build`
+- preview: `npm run preview`
+
+URL locale par defaut avec Vite:
+
+- `http://localhost:5173`
+
+## Docker / production-like
+
+Preparation:
+
+```powershell
+git clone https://github.com/assaneben/Hporterly-frontend.git ..\Hporterly-frontend
+copy .env.production.example .env.production
+docker compose --env-file .env.production up --build -d
+```
+
+Services attendus:
+
+- `proxy`: Traefik, ports `80/443`
+- `backend`: service Rust sur reseau interne Docker, port applicatif `8080`
+- `frontend`: service web du repo compagnon
+- `db`: PostgreSQL `17-alpine`
+- `db-backup`: profil `ops`, execution ponctuelle ou planifiee
+
+Commandes d'exploitation:
+
+- voir la config resolue: `docker compose --env-file .env.production config`
+- lancer un backup ponctuel: `docker compose --env-file .env.production run --rm db-backup`
+- suivre les logs backend: `docker compose logs -f backend`
+- suivre les logs proxy: `docker compose logs -f proxy`
+
+## Recette de demarrage
+
+- [ ] PostgreSQL accessible
+- [ ] variables `.env` ou `.env.production` en place
+- [ ] migrations appliquees
+- [ ] backend repond sur `/health` et `/ready`
+- [ ] login fonctionne
+- [ ] MFA fonctionne si activee
+- [ ] les stats historiques se chargent pour un role de supervision
