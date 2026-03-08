@@ -35,12 +35,18 @@ pub fn get_required_env(key: &str) -> String {
         #[cfg(not(debug_assertions))]
         {
             log::error!("Missing required environment variable: {}", key);
-            panic!("Missing required environment variable: {}. Please check your .env file.", key);
+            panic!(
+                "Missing required environment variable: {}. Please check your .env file.",
+                key
+            );
         }
 
         #[cfg(debug_assertions)]
         {
-            log::warn!("Using default value for missing environment variable: {}", key);
+            log::warn!(
+                "Using default value for missing environment variable: {}",
+                key
+            );
             format!("dev-{}", key)
         }
     })
@@ -98,7 +104,9 @@ impl Config {
         Config {
             database_url: get_required_env("DATABASE_URL"),
             host: get_optional_env("HOST", "127.0.0.1"),
-            port: get_optional_env("PORT", "8080").parse().expect("PORT must be a valid number"),
+            port: get_optional_env("PORT", "8080")
+                .parse()
+                .expect("PORT must be a valid number"),
             hl7_internal_port: get_optional_env("HL7_INTERNAL_PORT", "8081")
                 .parse()
                 .expect("HL7_INTERNAL_PORT must be a valid number"),
@@ -110,7 +118,9 @@ impl Config {
             jwt_expiration: get_optional_env("JWT_EXPIRATION", "86400")
                 .parse()
                 .expect("JWT_EXPIRATION must be a valid number"),
-            enable_tls: get_optional_env("ENABLE_TLS", "false").parse().unwrap_or(false),
+            enable_tls: get_optional_env("ENABLE_TLS", "false")
+                .parse()
+                .unwrap_or(false),
             environment,
             cors_allowed_origins: parse_csv_env(&get_optional_env("CORS_ALLOWED_ORIGINS", "")),
             mirth_webhook_secret: get_required_env("MIRTH_WEBHOOK_SECRET"),
@@ -184,7 +194,7 @@ impl Config {
         if self.mirth_webhook_secret.len() < 32 {
             if is_production {
                 return Err(
-                    "MIRTH_WEBHOOK_SECRET must be at least 32 characters in production".to_string()
+                    "MIRTH_WEBHOOK_SECRET must be at least 32 characters in production".to_string(),
                 );
             }
             log::warn!("MIRTH_WEBHOOK_SECRET is shorter than 32 characters (dev mode)");
@@ -193,7 +203,7 @@ impl Config {
         if self.mirth_webhook_secret == "CHANGEME_256_BIT_SECRET" {
             if is_production {
                 return Err(
-                    "MIRTH_WEBHOOK_SECRET uses placeholder value and must be replaced".to_string()
+                    "MIRTH_WEBHOOK_SECRET uses placeholder value and must be replaced".to_string(),
                 );
             }
             log::warn!("MIRTH_WEBHOOK_SECRET uses placeholder value (dev mode)");

@@ -110,7 +110,10 @@ pub fn init_logging(environment: &str) -> Result<(), Box<dyn std::error::Error>>
 
 pub fn observe_http_request(method: &str, path: &str, status: u16, elapsed: Duration) {
     let status = status.to_string();
-    METRICS.http_requests_total.with_label_values(&[method, path, status.as_str()]).inc();
+    METRICS
+        .http_requests_total
+        .with_label_values(&[method, path, status.as_str()])
+        .inc();
     METRICS
         .http_request_duration_seconds
         .with_label_values(&[method, path, status.as_str()])
@@ -145,11 +148,17 @@ pub fn normalize_path_label(route_pattern: Option<&str>, raw_path: &str) -> Stri
 
 pub fn render_prometheus_metrics(pool: &DbPool) -> Result<String, String> {
     let state = pool.state();
-    METRICS.db_pool_connections.set(i64::from(state.connections as i32));
-    METRICS.db_pool_idle_connections.set(i64::from(state.idle_connections as i32));
+    METRICS
+        .db_pool_connections
+        .set(i64::from(state.connections as i32));
+    METRICS
+        .db_pool_idle_connections
+        .set(i64::from(state.idle_connections as i32));
 
     let metric_families = METRICS.registry.gather();
     let mut buffer = Vec::new();
-    TextEncoder::new().encode(&metric_families, &mut buffer).map_err(|error| error.to_string())?;
+    TextEncoder::new()
+        .encode(&metric_families, &mut buffer)
+        .map_err(|error| error.to_string())?;
     String::from_utf8(buffer).map_err(|error| error.to_string())
 }
